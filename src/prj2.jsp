@@ -83,6 +83,8 @@
 	scheduleType=scheduleType.substring(0,scheduleType.indexOf("-"));
 	String user=new String(request.getParameter("task"));
 	user=user.substring(user.indexOf("-")+1);
+	if (user.contains("/"))
+		user = user.substring(0,user.indexOf("/"));
 
 	try {
 		if (scheduleType.contains("regEnroll")) 
@@ -191,7 +193,7 @@
 			stmt.close();
 			db.close();
 		}
-		else {
+		else if (scheduleType.contains("smartEnroll")) {
 
 			Connection db;
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -389,7 +391,7 @@ for (int i=0; i<subsets.size(); ++i) {
 		String idVals = new String("");
 		out.println("<table border='1' style='width:50%'>");
 		out.println("<tr>");
-		out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th><th><button type='submit' onclick='onSubmitForm2(\"user3\",\"table" + (i+1) + "\")'>Enroll</button><p id='user3' name='user3' hidden></p></th></tr>");
+		out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th><th><div class='divider'><button type='submit' onclick='onSubmitForm2(\"user3\",\"table" + (i+1) + "\")'>Enroll</button></div><p id='user3' name='user3' hidden></p></th></tr>");
 
 		for (int j=0; j<subsets.get(i).size(); ++j) {
 			out.println("<tr>");
@@ -411,6 +413,20 @@ for (int i=0; i<subsets.size(); ++i) {
 }
 out.println("</form><button onclick='goBack()'>Back</button>");
 }
+
+else {
+	String courseID=new String(request.getQueryString());
+	courseID=courseID.substring(courseID.indexOf("course=")+7);
+	Connection db;
+	Class.forName("com.mysql.jdbc.Driver").newInstance();
+	db= DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduling","root","discipline");
+	Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+	ResultSet.CONCUR_READ_ONLY);
+	String query = new String("DELETE from " + user + " where course_id=" + courseID);
+	stmt.executeUpdate(query);
+	
+}
+
 }
 
 	catch (Exception e) {

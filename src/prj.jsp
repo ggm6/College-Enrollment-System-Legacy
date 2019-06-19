@@ -86,6 +86,18 @@
 				return false;
 	}
 
+	function onSubmitForm2(id) {
+		var task = getUrlParam('task','Empty');
+		task=task.substring(task.search('-')+1);
+		let user=document.getElementById("user");
+		user.innerHTML=task;
+		var url = document.URL;
+		url = url.slice(0,url.indexOf("prj"));
+		var str = url + "prj2.jsp?task=remove-" + user.innerHTML + "/course=" + id;
+		document.myform2.action=str;
+		document.getElementById("myform2").submit();
+	}
+
 	function getUrlParam(parameter, defaultvalue){
 	    var urlparameter = defaultvalue;
 	    if(window.location.href.indexOf(parameter) > -1){
@@ -163,18 +175,20 @@
 				out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
 				while (rs.next()) {
 					out.println("<tr>");
+					String courseID = rs.getString(1);
 					for (int i=0; i<num_fields; ++i)
 					{
 						out.println("<td align = 'center'>");
 						out.println(rs.getString(i+1));
 						out.println("</td>");
 					}
+					out.println("<td align = 'center'><a href='javascript:onSubmitForm2(" + courseID + ");'>Remove</a></td>");
 					out.println("</tr>");
 				}
 				out.println("</table><br>");
 
 				rs.close();
-				out.println("<button onclick='disp()'>Begin Enrollment</button><div class='divider'></div><button onclick='disp2()'>Build Smart Schedule</button><br>");
+				out.println("<button onclick='disp()'>Begin Enrollment</button><div class='divider'></div><button onclick='disp2()'>Build Smart Schedule</button><div class='divider'></div><button onclick='goBack()'>Back</button><br>");
 			}
 			else if (id.equals(retrID) && !password.equals(retrPassword))
 			{
