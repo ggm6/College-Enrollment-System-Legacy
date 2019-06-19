@@ -72,7 +72,9 @@
 			go=checkBlank();
 		else
 			go=checkBlank2();
-		var str="http://pausch.cs.uakron.edu:8080/ggm6/prj/prj2.jsp?task="
+		var url = document.URL;
+		url = url.slice(0,url.indexOf("prj"));
+		var str=url + "prj2.jsp?task="
 		if (div.innerHTML=="div1")
 			str += "regEnroll-" + document.getElementById("user").innerHTML;
 		else
@@ -110,7 +112,11 @@
 	{
 		Connection db;
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
-		db= DriverManager.getConnection("jdbc:mysql://db1.cs.uakron.edu:3306/ISP_ggm6","ggm6","Discipline330");
+		String dbUrl,dbUser,dbPass;
+		dbUrl = "jdbc:mysql://localhost:3306/scheduling";
+		dbUser = "root";
+		dbPass = "discipline";
+		db= DriverManager.getConnection(dbUrl,dbUser,dbPass);
 		Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
     	ResultSet.CONCUR_READ_ONLY);
 
@@ -237,7 +243,7 @@
 			}
 			String time=new String(request.getParameter("time"));
 			String query=new String("SELECT * FROM Courses WHERE ");
-/* choose id */	if (!id.equals("")) { /* id must be exact */
+/* choose id */	if (!courseID.equals("")) { /* id must be exact */
 					query += "course_id=" + courseID;
 				}
 /* choose 4 */	else if (!department.equals("") && !teacher.equals("") && !course.equals("") && !time.equals("")) {

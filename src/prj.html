@@ -72,7 +72,9 @@
 			else
 				v += "-" + document.getElementById("ID2").value;
 			task.innerHTML=v;
-			var str="http://pausch.cs.uakron.edu:8080/ggm6/prj/prj.jsp?task=" + document.getElementById("task").innerHTML;
+			var url = document.URL;
+			url = url.replace(".html",".jsp")
+			var str=url + "?task=" + document.getElementById("task").innerHTML;
 			document.myform.action=str;
 		}
 

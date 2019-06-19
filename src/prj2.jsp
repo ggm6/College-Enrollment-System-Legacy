@@ -25,7 +25,9 @@
 	function onSubmitForm(user) {
 		var user1=user;
 		setUser(user1);
-		var str="http://pausch.cs.uakron.edu:8080/ggm6/prj/prj3.jsp?task=regEnroll-" + document.getElementById("user2").innerHTML;
+		var url = document.URL;
+		url = url.slice(0,url.indexOf("prj"));
+		var str=url + "prj3.jsp?task=regEnroll-" + document.getElementById("user2").innerHTML;
 		document.myform3.action=str;
 			var go=checkBlank();
 			if (go==true)
@@ -37,7 +39,9 @@
 		var user2=user;
 		setUser(user2);
 		var val=document.getElementById(table).value;
-		var str="http://pausch.cs.uakron.edu:8080/ggm6/prj/prj3.jsp?task=smartEnroll-[" + val + "]" + document.getElementById("user3").innerHTML;
+		var url = document.URL;
+		url = url.slice(0,url.indexOf("prj"));
+		var str=url + "prj3.jsp?task=smartEnroll-" + val + "*" + document.getElementById("user3").innerHTML;
 
 		document.myform4.action=str;
 		document.myform4.submit();
@@ -155,7 +159,7 @@
 
 			Connection db;
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			db= DriverManager.getConnection("jdbc:mysql://db1.cs.uakron.edu:3306/ISP_ggm6","ggm6","Discipline330");
+			db= DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduling","root","discipline");
 			Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
 			ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs=stmt.executeQuery(query);
@@ -191,7 +195,7 @@
 
 			Connection db;
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			db= DriverManager.getConnection("jdbc:mysql://db1.cs.uakron.edu:3306/ISP_ggm6","ggm6","Discipline330");
+			db= DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduling","root","discipline");
 			Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
 			ResultSet.CONCUR_READ_ONLY);
 

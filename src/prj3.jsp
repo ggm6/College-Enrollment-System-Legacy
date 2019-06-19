@@ -30,7 +30,7 @@
 
 			Connection db;
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			db= DriverManager.getConnection("jdbc:mysql://db1.cs.uakron.edu:3306/ISP_ggm6","ggm6","Discipline330");
+			db= DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduling","root","discipline");
 			Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
 			ResultSet.CONCUR_READ_ONLY);
 
@@ -111,15 +111,16 @@
 
 		else if (scheduleType.contains("smartEnroll")) {
 			String user = new String(request.getParameter("task"));
-			String ids = new String(user.substring(user.indexOf("[")+1,user.indexOf("]")));
-			user = user.substring(user.indexOf("]")+1);
+			String ids = new String(user.substring(user.indexOf("-")+1,user.indexOf("*")));
+			user = user.substring(user.indexOf("*")+1);
 			String[] IDs = ids.split(",");
-			for (int i=0; i<IDs.length; ++i)
+			for (int i=0; i<IDs.length; ++i) {
 				IDs[i]=IDs[i].trim();
+			}
 
 			Connection db;
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			db= DriverManager.getConnection("jdbc:mysql://db1.cs.uakron.edu:3306/ISP_ggm6","ggm6","Discipline330");
+			db= DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduling","root","discipline");
 			Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
 			ResultSet.CONCUR_READ_ONLY);
 
