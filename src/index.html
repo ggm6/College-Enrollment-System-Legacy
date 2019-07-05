@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="styling.css">
+	<script src="scripting.js"></script>
+</head>
+<title>UA Smart Scheduling</title>
+<center><h1>Welcome to University of Akron Smart Scheduling Tool!</h1></center><br><br>
+<body>
+	<form id="myform" name="myform" method = "post">
+	<button name="Course Lookup" type="button" id="Course Lookup" style="width:200px;height:50px;font-size: 100%" onclick="findCourse()">Course Lookup</button><br><br><br><br>
+	<button name="Create" type="button" id="Create" style="width:200px;height:50px;font-size: 100%" onclick="createAccount()">Create Account</button><br><br><br><br>
+	<button name="Enroll" type="button" id="Enroll" style="width:200px;height:50px;font-size: 100%" onclick="verifyStudent()">Enroll</button><br><br>
+	<div id="login" class="Form"> <br><h3>Please enter login information before continuing</h3>
+		Please enter user ID:<br><input id="ID" name="ID" minlength="4" required><br>
+		Please enter user password:<br><input id="password" name="password" minlength="4" type="password" required><br>
+		<button type="submit" onclick="onSubmitForm('Login')">Submit</button>
+	</div>
+	<div id="create" class="Form"> <br><h3>Please pick an ID and password</h3>
+		New user ID:<br><input id="ID2" name="ID2" minlength="4" required><br>
+		New user password:<br><input id="password2" name="password2" type="password" minlength="4" required><br>
+		<button type="submit" onclick="onSubmitForm('Create')">Submit</button>
+	</div>
+	<div id="search" class="Form"> <br><h3>Please provide some criteria for course search</h3>
+		Course ID:<br><textarea style="resize:none;" id="courseID" name="courseID" cols="20" rows="1" placeholder="Please be exact"></textarea><br>
+		Course Name:<br><textarea style="resize:none;" id="courseName" name="courseName" cols="20" rows="1"></textarea><br>
+		Department:<br><textarea style="resize:none;" id="department" name="department" cols="20" rows="1"></textarea><br>
+		Teacher:<br><textarea style="resize:none;" id="teacher" name="teacher" cols="20" rows="1"></textarea><br>
+		Time:<br><textarea style="resize:none;" id="time" name="time" cols="20" rows="1" placeholder=&quot;1:00PM-2:15PM&quot;></textarea><br>
+		<button type="submit" onclick="onSubmitForm('Search')">Submit</button>
+	</div>
+	<p id="task" name="task" hidden></p>
+	</form>
+</body>
+</html>

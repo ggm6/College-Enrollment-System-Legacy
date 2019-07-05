@@ -1,0 +1,22 @@
+::-webkit-input-placeholder {
+   font-style: italic;
+}
+:-moz-placeholder {
+   font-style: italic;  
+}
+::-moz-placeholder {
+   font-style: italic;  
+}
+:-ms-input-placeholder {  
+   font-style: italic; 
+}
+
+.Button {
+	width: 200px;
+	height: 50px;
+	font-size: 100%;
+}
+
+.Form {
+	display: none;
+}

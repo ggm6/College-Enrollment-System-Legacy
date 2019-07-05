@@ -40,6 +40,21 @@
 		div.innerHTML="div2";
 	}
 
+	function checkAndSubmit() {
+		var go = confirm("WARNING: You are about to remove all classes in your schedule!");
+		if (go==true) {
+			var task = getUrlParam('task','Empty');
+			task=task.substring(task.search('-')+1);
+			let user=document.getElementById("user");
+			user.innerHTML=task;
+			var url = document.URL;
+			url = url.slice(0,url.indexOf("prj"));
+			var str = url + "prj2.jsp?task=dump-" + user.innerHTML;
+			document.myform2.action=str;
+			document.getElementById("myform2").submit();
+		}
+	}
+
 	function checkBlank() {
 		let id=document.getElementById("courseID");
 		let name=document.getElementById("courseName");
@@ -48,7 +63,7 @@
 		let time=document.getElementById("time");
 		var go;
 		if (id.value=="" && name.value=="" && department.value=="" && teacher.value=="" && time.value=="") {
-			go=confirm("WARNING: You are about return all courses in the system!");
+			go=confirm("WARNING: You are about to return all courses in the system!");
 		}
 		else
 			go=true;
@@ -188,7 +203,7 @@
 				out.println("</table><br>");
 
 				rs.close();
-				out.println("<button onclick='disp()'>Begin Enrollment</button><div class='divider'></div><button onclick='disp2()'>Build Smart Schedule</button><div class='divider'></div><button onclick='goBack()'>Back</button><br>");
+				out.println("<button onclick='disp()'>Begin Enrollment</button><div class='divider'></div><button onclick='disp2()'>Build Smart Schedule</button><div class='divider'></div><button onclick='checkAndSubmit()'>Dump Schedule</button><div class='divider'></div><button onclick='goBack()'>Back</button><br>");
 			}
 			else if (id.equals(retrID) && !password.equals(retrPassword))
 			{

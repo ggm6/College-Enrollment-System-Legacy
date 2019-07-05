@@ -79,15 +79,15 @@
 
 	<%
 
-	String scheduleType=new String(request.getParameter("task"));
-	scheduleType=scheduleType.substring(0,scheduleType.indexOf("-"));
+	String task=new String(request.getParameter("task"));
+	task=task.substring(0,task.indexOf("-"));
 	String user=new String(request.getParameter("task"));
 	user=user.substring(user.indexOf("-")+1);
 	if (user.contains("/"))
 		user = user.substring(0,user.indexOf("/"));
 
 	try {
-		if (scheduleType.contains("regEnroll")) 
+		if (task.contains("regEnroll")) 
 		{
 
 			String id=new String(request.getParameter("courseID2"));
@@ -193,7 +193,7 @@
 			stmt.close();
 			db.close();
 		}
-		else if (scheduleType.contains("smartEnroll")) {
+		else if (task.contains("smartEnroll")) {
 
 			Connection db;
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -414,6 +414,25 @@ for (int i=0; i<subsets.size(); ++i) {
 out.println("</form><button onclick='goBack()'>Back</button>");
 }
 
+else if (task.contains("dump")) {
+	Connection db;
+	Class.forName("com.mysql.jdbc.Driver").newInstance();
+	db= DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduling","root","discipline");
+	Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+	ResultSet.CONCUR_READ_ONLY);
+	Statement stmt2 = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+	ResultSet.CONCUR_READ_ONLY);
+	String query = new String("SELECT * from " + user);
+	ResultSet rs = stmt.executeQuery(query);
+	while (rs.next()) {
+		query = "DELETE from " + user + " where course_id=";
+		query += rs.getString(1);
+		stmt2.executeUpdate(query);
+	}
+	out.println("<h3>All classes removed successfully!</h3><br><br>");
+	out.println("<button onclick='goBack()'>Back</button>");
+}
+
 else {
 	String courseID=new String(request.getQueryString());
 	courseID=courseID.substring(courseID.indexOf("course=")+7);
@@ -424,6 +443,29 @@ else {
 	ResultSet.CONCUR_READ_ONLY);
 	String query = new String("DELETE from " + user + " where course_id=" + courseID);
 	stmt.executeUpdate(query);
+	out.println("<h3>Class removed successfully!</h3><br><br>");
+	out.println("<h3>Your Schedule:</h3><br>");
+	query = "SELECT * from " + user;
+	ResultSet rs=stmt.executeQuery(query);
+	int num_fields = rs.getMetaData().getColumnCount();
+	out.println("<table border='1' style='width:50%'>");
+	out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
+	while (rs.next()) {
+		out.println("<tr>");
+		for (int i=0; i<num_fields; ++i)
+		{
+			out.println("<td align = 'center'>");
+			out.println(rs.getString(i+1));
+			out.println("</td>");
+		}
+		out.println("</tr>");
+	}
+	out.println("</table><br><br>");
+	out.println("<br><button onclick='goBack()'>Back</button>");
+
+	rs.close();
+	stmt.close();
+	db.close();
 	
 }
 
