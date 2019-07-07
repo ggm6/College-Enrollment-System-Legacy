@@ -161,7 +161,7 @@
 
 			Connection db;
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			db= DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduling","root","discipline");
+			db= DriverManager.getConnection("jdbc:mysql://localhost:3306/Scheduling","root","discipline");
 			Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
 			ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs=stmt.executeQuery(query);

@@ -1,135 +1,9 @@
 <html>
+<head>
+	<link rel="stylesheet" href="styling.css">
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/scripting.js"></script>
+</head>
 <body>
-
-<style>
-.divider{
-    width:20px;
-    display:inline-block;
-}
-</style>
-
-<script type="text/javascript">
-
-	function goBack() {
-		window.history.back();
-	}
-
-	function disp() {
-		var task = getUrlParam('task','Empty');
-		task=task.substring(task.search('-')+1);
-		let user=document.getElementById("user");
-		user.innerHTML=task;
-		let disp2=document.getElementById("disp2");
-		disp2.style.display="none";
-		let disp=document.getElementById("disp");
-		disp.style.display="inline";
-		let div=document.getElementById("div");
-		div.innerHTML="div1";
-	}
-
-	function disp2() {
-		var task = getUrlParam('task','Empty');
-		task=task.substring(task.search('-')+1);
-		let user=document.getElementById("user");
-		user.innerHTML=task;
-		let disp=document.getElementById("disp");
-		disp.style.display="none";
-		let disp2=document.getElementById("disp2");
-		disp2.style.display="inline";
-		let div=document.getElementById("div");
-		div.innerHTML="div2";
-	}
-
-	function checkAndSubmit() {
-		var go = confirm("WARNING: You are about to remove all classes in your schedule!");
-		if (go==true) {
-			var task = getUrlParam('task','Empty');
-			task=task.substring(task.search('-')+1);
-			let user=document.getElementById("user");
-			user.innerHTML=task;
-			var url = document.URL;
-			url = url.slice(0,url.indexOf("prj"));
-			var str = url + "prj2.jsp?task=dump-" + user.innerHTML;
-			document.myform2.action=str;
-			document.getElementById("myform2").submit();
-		}
-	}
-
-	function checkBlank() {
-		let id=document.getElementById("courseID");
-		let name=document.getElementById("courseName");
-		let department=document.getElementById("department");
-		let teacher=document.getElementById("teacher");
-		let time=document.getElementById("time");
-		var go;
-		if (id.value=="" && name.value=="" && department.value=="" && teacher.value=="" && time.value=="") {
-			go=confirm("WARNING: You are about to return all courses in the system!");
-		}
-		else
-			go=true;
-		return go;
-	}
-
-	function checkBlank2() {
-		let name2=document.getElementById("courseName2");
-		var go=true;
-		if (name2.value=="") {
-			alert("ERROR: Must build schedule with at least one course.");
-			go=false;
-		}
-		return go;
-	}
-
-	function onSubmitForm() {
-		var go;
-		let div=document.getElementById("div");
-		if (div.innerHTML=="div1")
-			go=checkBlank();
-		else
-			go=checkBlank2();
-		var url = document.URL;
-		url = url.slice(0,url.indexOf("prj"));
-		var str=url + "prj2.jsp?task="
-		if (div.innerHTML=="div1")
-			str += "regEnroll-" + document.getElementById("user").innerHTML;
-		else
-			str += "smartEnroll-" + document.getElementById("user").innerHTML;
-		document.myform2.action=str;
-			if (go==true)
-				return true;
-			else
-				return false;
-	}
-
-	function onSubmitForm2(id) {
-		var task = getUrlParam('task','Empty');
-		task=task.substring(task.search('-')+1);
-		let user=document.getElementById("user");
-		user.innerHTML=task;
-		var url = document.URL;
-		url = url.slice(0,url.indexOf("prj"));
-		var str = url + "prj2.jsp?task=remove-" + user.innerHTML + "/course=" + id;
-		document.myform2.action=str;
-		document.getElementById("myform2").submit();
-	}
-
-	function getUrlParam(parameter, defaultvalue){
-	    var urlparameter = defaultvalue;
-	    if(window.location.href.indexOf(parameter) > -1){
-	        urlparameter = getUrlVars()[parameter];
-	        }
-	    return urlparameter;
-	}
-
-	function getUrlVars() {
-	    var vars = {};
-	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-	        vars[key] = value;
-	    });
-	    return vars;
-	}
-
-</script>
 
 <%@page import="java.sql.*"%>
 <%
@@ -140,15 +14,15 @@
 		Connection db;
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
 		String dbUrl,dbUser,dbPass;
-		dbUrl = "jdbc:mysql://localhost:3306/scheduling";
+		dbUrl = "jdbc:mysql://localhost:3306/Scheduling";
 		dbUser = "root";
 		dbPass = "discipline";
 		db= DriverManager.getConnection(dbUrl,dbUser,dbPass);
 		Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
     	ResultSet.CONCUR_READ_ONLY);
 
-    	String id=new String(request.getParameter("ID"));
-		String password=new String(request.getParameter("password"));
+    	String id=new String(request.getParameter("loginID"));
+		String password=new String(request.getParameter("loginPassword"));
 
 
 		if (task.contains("Login"))
@@ -197,13 +71,13 @@
 						out.println(rs.getString(i+1));
 						out.println("</td>");
 					}
-					out.println("<td align = 'center'><a href='javascript:onSubmitForm2(" + courseID + ");'>Remove</a></td>");
+					out.println("<td align = 'center'><a href='javascript:pageTwoOnSubmitForm2(" + courseID + ");'>Remove</a></td>");
 					out.println("</tr>");
 				}
 				out.println("</table><br>");
 
 				rs.close();
-				out.println("<button onclick='disp()'>Begin Enrollment</button><div class='divider'></div><button onclick='disp2()'>Build Smart Schedule</button><div class='divider'></div><button onclick='checkAndSubmit()'>Dump Schedule</button><div class='divider'></div><button onclick='goBack()'>Back</button><br>");
+				out.println("<button onclick='displayCourseSearch()'>Begin Enrollment</button><div class='divider'></div><button onclick='displayBuildSmartSchedule()'>Build Smart Schedule</button><div class='divider'></div><button onclick='pageTwoOnSubmitForm()'>Dump Schedule</button><div class='divider'></div><button onclick='goBack()'>Back</button><br>");
 			}
 			else if (id.equals(retrID) && !password.equals(retrPassword))
 			{
@@ -221,7 +95,7 @@
 
 		else if (task.contains("Create"))
 		{
-			String id2=new String(request.getParameter("ID2"));
+			String id2=new String(request.getParameter("createAccountID"));
 			id2 = id2.replaceAll("\\s","");
 			String password2=new String(request.getParameter("password2"));
 
@@ -250,7 +124,7 @@
 
 			out.println("<h3>Successfully created account!  You are now logged in and may begin building a schedule.</h3>");
 			out.println("<br>");
-			out.println("<button onclick='disp()'>Begin Enrollment</button><div class='divider'></div><button onclick='disp2()'>Build Smart Schedule</button><br>");
+			out.println("<button onclick='displayCourseSearch()'>Begin Enrollment</button><div class='divider'></div><button onclick='displayBuildSmartSchedule()'>Build Smart Schedule</button><br>");
 
 			rs.close();
 		}
@@ -360,22 +234,23 @@
 
 %>
 
-<form id="myform2" name="myform2" method="post" onsubmit="return onSubmitForm()">
-<div id="disp" style="display:none;"> <br><h3>Please provide some criteria for course search</h3>
-	Course ID:<br><textarea style="resize:none;" id="courseID" name="courseID2" cols="20" rows="1"></textarea><br>
-	Course Name:<br><textarea style="resize:none;" id="courseName" name="courseName2" cols="20" rows="1"></textarea><br>
-	Department:<br><textarea style="resize:none;" id="department" name="department2" cols="20" rows="1"></textarea><br>
-	Teacher:<br><textarea style="resize:none;" id="teacher" name="teacher2" cols="20" rows="1"></textarea><br>
-	Time:<br><textarea style="resize:none;" id="time" name="time2" cols="20" rows="1" placeholder="'1:00PM-2:15PM'"></textarea><br>
-	<br><button>Submit</button>
+<form id="myform2" name="myform2" method="post">
+<div id="courseSearch" style="display:none;"> <br><h3>Please provide some criteria for course search</h3>
+	Course ID:<br><input id="courseID" name="courseID2" cols="20" rows="1"></textarea><br>
+	Course Name:<br><input id="courseName" name="courseName2" cols="20" rows="1"></textarea><br>
+	Department:<br><input id="department" name="department2" cols="20" rows="1"></textarea><br>
+	Teacher:<br><input id="teacher" name="teacher2" cols="20" rows="1"></textarea><br>
+	Time:<br><input id="time" name="time2" cols="20" rows="1" placeholder="'1:00PM-2:15PM'"></textarea><br>
+	<br><button type="button" onclick="setSchedulingChoice('regEnroll')">Submit</button>
 </div>
-<br><div id="disp2" style="display:none;"><br>
-<h3>Type the courses in order of priority:</h3><strong><em>Please be exact</em><strong><br><br>
-Course Names:<br><textarea style="resize:none;" id="courseName2" name="courseName2Smart" cols="30" rows="7" placeholder="comma separated"></textarea>
-<br><button>Submit</button>
+<br><div id="buildSmartSchedule" style="display:none;"><br>
+<h3>Type the courses in order of priority:</h3><strong><em>Please be exact</em><br><br>
+Course 1:<br><input id="smartScheduleCourseName1">
+<br><button type="button" id="courseNum1" onclick="addCourse(1)">Add Course</button><div class="Divider"></div><button type="button" id="submitButton" onclick="setSchedulingChoice('smartEnroll')">Submit</button>
 </div>
 <p id="user" name="user" hidden></p>
-<p id="div" hidden>div1</p>
+<p id="schedulingChoice" hidden></p>
+<p id="smartSchedulingNumCourses" name="smartSchedulingNumCourses" hidden>1</p>
 </form>
 
 </body>

@@ -20,3 +20,12 @@
 .Form {
 	display: none;
 }
+
+.Divider{
+    width:20px;
+    display:inline-block;
+}
+
+.hiddenSubmit {
+	display: none;
+}
