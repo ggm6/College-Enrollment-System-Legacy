@@ -48,7 +48,7 @@
 			if (id.equals("") || password.equals(""))
 			{
 				out.println("<h3>Please enter a valid ID and password.</h3> (page no longer active)");
-				out.println("<br><button onclick='goBack()'>Back</button>");
+				out.println("<br><button type='button' onclick='goBack()'>Back</button>");
 				return;
 			}
 			else if (id.equals(retrID) && password.equals(retrPassword))
@@ -82,13 +82,13 @@
 			else if (id.equals(retrID) && !password.equals(retrPassword))
 			{
 				out.println("<h3>Your password is incorrect for the ID in our database.</h3> (page no longer active)");
-				out.println("<br><button onclick='goBack()'>Back</button>");
+				out.println("<br><button type='button' onclick='goBack()'>Back</button>");
 				return;
 			}
 			else
 			{
 				out.println("<h3>You do not have an account, please create one.</h3> (page no longer active)");
-				out.println("<br><button onclick='goBack()'>Back</button>");
+				out.println("<br><button type='button' onclick='goBack()'>Back</button>");
 				return;
 			}
 		}
@@ -102,7 +102,7 @@
 			if (id2.equals("") || password2.equals("")) 
 			{
 				out.println("<h3>Invalid ID or password.</h3> (page no longer active)");
-				out.println("<br><button onclick='goBack()'>Back</button>");
+				out.println("<br><button type='button' onclick='goBack()'>Back</button>");
 				return;
 			}
 
@@ -111,7 +111,7 @@
 			{
 				if (id2.equals(rs.getString(1))) {
 					out.println("<h3>Username is taken, please try another.</h3> (page no longer active)");
-					out.println("<br><button onclick='goBack()'>Back</button>");
+					out.println("<br><button type='button' onclick='goBack()'>Back</button>");
 					return;
 				}
 			}
@@ -203,7 +203,7 @@
 			int num_fields = rs.getMetaData().getColumnCount();			
 			if (!rs.next()) {
 				out.println("Your search yielded no results. (page no longer active)");
-				out.println("<br><button onclick='goBack()'>Back</button>");
+				out.println("<br><button type='button onclick='goBack()'>Back</button>");
 				return;
 			}
 			rs.beforeFirst();
@@ -220,7 +220,7 @@
 				out.println("</tr>");
 			}
 			out.println("</table>");
-			out.println("<br><button onclick='goBack()'>Back</button>");	
+			out.println("<br><button type='button' onclick='goBack()'>Back</button>");	
 			return;	
 		}
 

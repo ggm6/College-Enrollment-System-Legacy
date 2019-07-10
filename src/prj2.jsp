@@ -22,7 +22,7 @@
 
 	String task=new String(request.getParameter("task"));
 	String user=new String(request.getParameter("user"));
-	
+
 	try {
 		if (task.contains("regEnroll")) 
 		{
@@ -105,7 +105,7 @@
 			int num_fields = rs.getMetaData().getColumnCount();			
 			if (!rs.next()) {
 				out.println("Your search yielded no results. (page no longer active)");
-				out.println("<br><button onclick='goBack()'>Back</button>");
+				out.println("<br><button type='button' onclick='goBack()'>Back</button>");
 				return;
 			}
 		
@@ -165,7 +165,7 @@
 				++rsNumRows;
 			if (rsNumRows==0) {
 				out.println("Your search yielded no results. (page no longer active)");
-				out.println("<br><button onclick='goBack()'>Back</button>");
+				out.println("<br><button type='button' onclick='goBack()'>Back</button>");
 				return;
 			}
 			rs.beforeFirst();
@@ -340,7 +340,7 @@ for (int i=0; i<subsets.size(); ++i) {
 		out.println("</table><input type='hidden' id='table" + (i+1) + "' name='table" + (i+1) + "' value='" + idVals + "'/><br><br>");
 	}
 }
-out.println("<button onclick='goBack()'>Back</button>");
+out.println("<button type='button' onclick='goBack()'>Back</button>");
 }
 
 else if (task.contains("dump")) {
@@ -359,7 +359,7 @@ else if (task.contains("dump")) {
 		stmt2.executeUpdate(query);
 	}
 	out.println("<h3>All classes removed successfully!</h3><br><br>");
-	out.println("<button onclick='goBack()'>Back</button>");
+	out.println("<button type='button' onclick='goBack()'>Back</button>");
 }
 
 else {
@@ -389,7 +389,7 @@ else {
 		out.println("</tr>");
 	}
 	out.println("</table><br><br>");
-	out.println("<br><button onclick='goBack()'>Back</button>");
+	out.println("<br><button type='button' onclick='goBack()'>Back</button>");
 
 	rs.close();
 	stmt.close();
