@@ -4,10 +4,12 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/scripting.js"></script>
 </head>
 <body>
+<form id="myform2" name="myform2" method="post" onsubmit="pageTwoOnSubmitForm('')">
 
 <%@page import="java.sql.*"%>
 <%
 	String task=new String(request.getParameter("task"));  // Course Lookup, Create Account, Login
+	String trueID = new String("");
 
 	try
 	{
@@ -21,12 +23,10 @@
 		Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
     	ResultSet.CONCUR_READ_ONLY);
 
-    	String id=new String(request.getParameter("loginID"));
-		String password=new String(request.getParameter("loginPassword"));
-
-
 		if (task.contains("Login"))
 		{
+			String id=new String(request.getParameter("loginID"));
+			String password=new String(request.getParameter("loginPassword"));
 
 			String query=new String("SELECT * FROM Users WHERE ua_id='" + id + "'");
 			ResultSet rs=stmt.executeQuery(query);
@@ -53,14 +53,14 @@
 			}
 			else if (id.equals(retrID) && password.equals(retrPassword))
 			{
+				trueID = id;
 				out.println("<h3>Successfully logged in!</h3>");
-
 				out.println("<h3>Your Schedule:</h3>");
 				query="SELECT * FROM " + id;
 				rs=stmt.executeQuery(query);
 				num_fields = rs.getMetaData().getColumnCount();
 				
-				out.println("<table border='1' style='width:50%'>");
+				out.println("<table>");
 				out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
 				while (rs.next()) {
 					out.println("<tr>");
@@ -71,13 +71,13 @@
 						out.println(rs.getString(i+1));
 						out.println("</td>");
 					}
-					out.println("<td align = 'center'><a href='javascript:pageTwoOnSubmitForm2(" + courseID + ");'>Remove</a></td>");
+					out.println("<td align = 'center'><a href='javascript:pageTwoOnSubmitForm(" + courseID + ");'>Remove</a></td>");
 					out.println("</tr>");
 				}
 				out.println("</table><br>");
 
 				rs.close();
-				out.println("<button onclick='displayCourseSearch()'>Begin Enrollment</button><div class='divider'></div><button onclick='displayBuildSmartSchedule()'>Build Smart Schedule</button><div class='divider'></div><button onclick='pageTwoOnSubmitForm()'>Dump Schedule</button><div class='divider'></div><button onclick='goBack()'>Back</button><br>");
+				out.println("<button type='button' onclick='displayCourseSearch()'>Begin Enrollment</button><div class='divider'></div><button type='button' onclick='displayBuildSmartSchedule()'>Build Smart Schedule</button><div class='divider'></div><button type='submit' onclick='setTask(\"dump\")'>Dump Schedule</button><div class='divider'></div><button type='button' onclick='goBack()'>Back</button><br>");
 			}
 			else if (id.equals(retrID) && !password.equals(retrPassword))
 			{
@@ -97,7 +97,7 @@
 		{
 			String id2=new String(request.getParameter("createAccountID"));
 			id2 = id2.replaceAll("\\s","");
-			String password2=new String(request.getParameter("password2"));
+			String password2=new String(request.getParameter("createAccountPassword"));
 
 			if (id2.equals("") || password2.equals("")) 
 			{
@@ -116,6 +116,7 @@
 				}
 			}
 
+			trueID = id2;
 			String query=new String("INSERT into Users (ua_id,ua_password) values ('" + id2 + "','" + password2 + "')");
 			stmt.executeUpdate(query);
 
@@ -124,7 +125,7 @@
 
 			out.println("<h3>Successfully created account!  You are now logged in and may begin building a schedule.</h3>");
 			out.println("<br>");
-			out.println("<button onclick='displayCourseSearch()'>Begin Enrollment</button><div class='divider'></div><button onclick='displayBuildSmartSchedule()'>Build Smart Schedule</button><br>");
+			out.println("<button type='button' onclick='displayCourseSearch()'>Begin Enrollment</button><div class='divider'></div><button type='button' onclick='displayBuildSmartSchedule()'>Build Smart Schedule</button><br>");
 
 			rs.close();
 		}
@@ -206,7 +207,7 @@
 				return;
 			}
 			rs.beforeFirst();
-			out.println("<table border='1' style='width:50%'>");
+			out.println("<table border='1' class='Table'>");
 			out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
 			while (rs.next()) {
 				out.println("<tr>");
@@ -234,23 +235,24 @@
 
 %>
 
-<form id="myform2" name="myform2" method="post">
-<div id="courseSearch" style="display:none;"> <br><h3>Please provide some criteria for course search</h3>
+<div id="courseSearch" class="Form"> <br><h3>Please provide some criteria for course search</h3>
 	Course ID:<br><input id="courseID" name="courseID2" cols="20" rows="1"></textarea><br>
 	Course Name:<br><input id="courseName" name="courseName2" cols="20" rows="1"></textarea><br>
 	Department:<br><input id="department" name="department2" cols="20" rows="1"></textarea><br>
 	Teacher:<br><input id="teacher" name="teacher2" cols="20" rows="1"></textarea><br>
 	Time:<br><input id="time" name="time2" cols="20" rows="1" placeholder="'1:00PM-2:15PM'"></textarea><br>
-	<br><button type="button" onclick="setSchedulingChoice('regEnroll')">Submit</button>
+	<br><button type="submit" onclick="setTask('regEnroll')">Submit</button>
 </div>
-<br><div id="buildSmartSchedule" style="display:none;"><br>
+<br><div id="buildSmartSchedule" class="Form"><br>
 <h3>Type the courses in order of priority:</h3><strong><em>Please be exact</em><br><br>
-Course 1:<br><input id="smartScheduleCourseName1">
-<br><button type="button" id="courseNum1" onclick="addCourse(1)">Add Course</button><div class="Divider"></div><button type="button" id="submitButton" onclick="setSchedulingChoice('smartEnroll')">Submit</button>
+Course 1:<br><input id="smartScheduleCourseName1" name="smartScheduleCourseName1">
+<br><button type="button" id="courseNum" onclick="addCourse()">Add Course</button><div id="Divider" class="Divider"></div><button  type="submit" id="submitButton" onclick="setTask('smartEnroll')">Submit</button>
+</strong>
 </div>
-<p id="user" name="user" hidden></p>
-<p id="schedulingChoice" hidden></p>
-<p id="smartSchedulingNumCourses" name="smartSchedulingNumCourses" hidden>1</p>
+<input id="user" name="user" value="<%=trueID%>" hidden>
+<input id="task" name="task" value="" hidden>
+<input id="remove" name="remove" value="" hidden>
+<input id="smartSchedulingNumCourses" name="smartSchedulingNumCourses" value="1" hidden>
 </form>
 
 </body>

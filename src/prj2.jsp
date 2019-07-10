@@ -1,69 +1,10 @@
 <html>
+<head>
+	<link rel="stylesheet" href="styling.css">
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/scripting.js"></script>
+</head>
 <body>
-
-	<script type="text/javascript">
-
-	function goBack() {
-		history.back();
-	}
-
-	function setUser(idOPEN) {
-		var task = getUrlParam('task','Empty');
-		task=task.substring(task.search('-')+1);
-		document.getElementById(idOPEN).innerHTML=task;
-	}
-
-	function checkBlank() {
-		let id=document.getElementById("courseID3");
-		if (id.value=="") {
-			alert("Error: Please select actual course ID");
-			return false;
-		}
-		return true;
-	}
-
-	function onSubmitForm(user) {
-		var user1=user;
-		setUser(user1);
-		var url = document.URL;
-		url = url.slice(0,url.indexOf("prj"));
-		var str=url + "prj3.jsp?task=regEnroll-" + document.getElementById("user2").innerHTML;
-		document.myform3.action=str;
-			var go=checkBlank();
-			if (go==true)
-				return true;
-			return false;
-	}
-
-	function onSubmitForm2(user,table) {
-		var user2=user;
-		setUser(user2);
-		var val=document.getElementById(table).value;
-		var url = document.URL;
-		url = url.slice(0,url.indexOf("prj"));
-		var str=url + "prj3.jsp?task=smartEnroll-" + val + "*" + document.getElementById("user3").innerHTML;
-
-		document.myform4.action=str;
-		document.myform4.submit();
-	}
-
-	function getUrlParam(parameter, defaultvalue){
-	    var urlparameter = defaultvalue;
-	    if(window.location.href.indexOf(parameter) > -1){
-	        urlparameter = getUrlVars()[parameter];
-	        }
-	    return urlparameter;
-	}
-
-	function getUrlVars() {
-	    var vars = {};
-	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-	        vars[key] = value;
-	    });
-	    return vars;
-	}
-
-	</script>
+	<form id='myform' name='myform' method='post'>
 
 	<%@page import="java.sql.*"%>
 	<%@page import="java.util.*"%>
@@ -80,12 +21,8 @@
 	<%
 
 	String task=new String(request.getParameter("task"));
-	task=task.substring(0,task.indexOf("-"));
-	String user=new String(request.getParameter("task"));
-	user=user.substring(user.indexOf("-")+1);
-	if (user.contains("/"))
-		user = user.substring(0,user.indexOf("/"));
-
+	String user=new String(request.getParameter("user"));
+	
 	try {
 		if (task.contains("regEnroll")) 
 		{
@@ -187,31 +124,25 @@
 				}
 				out.println("</table><br><br>");
 
-			out.println("<form id='myform3' name='myform3' method='post' onsubmit='return onSubmitForm(\"user2\")'><div id='disp'>Enroll w/ Course ID:<br><textarea style='resize:none;' cols='20' rows='1' id='courseID3' name='courseID3'></textarea><br><button>Enroll</button><button type='button' onclick='goBack()'>Back</button></div><p id='user2' name='user2' hidden></p></form>");
+			out.println("<div id='disp'>Enroll w/ Course ID:<br><textarea style='resize:none;' cols='20' rows='1' id='courseID3' name='courseID3'></textarea><br><button type='button' onclick='pageThreeOnSubmitForm(\"\")'>Enroll</button><button type='button' onclick='goBack()'>Back</button></div>");
 
 			rs.close();
 			stmt.close();
 			db.close();
 		}
 		else if (task.contains("smartEnroll")) {
-
 			Connection db;
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			db= DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduling","root","discipline");
 			Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
 			ResultSet.CONCUR_READ_ONLY);
 
-			String oldCourseAll=new String(request.getParameter("courseName2Smart"));
-			String newCourseAll[] = oldCourseAll.split("'");
-			String courseAll = new String("");
-			for (int i=0; i<newCourseAll.length; ++i) {
-				if (i==newCourseAll.length-1)
-					courseAll += newCourseAll[i];
-				else
-					courseAll += newCourseAll[i] + "\\'";
-			}
-			String courses[]=courseAll.split(",");
-			for (int i=0; i<courses.length; ++i) {
+			int numCourses = Integer.parseInt(request.getParameter("smartSchedulingNumCourses"));
+			String courses[] = new String[numCourses];
+
+			for (int i=0; i<numCourses; ++i) {
+				String param = "smartScheduleCourseName" + (i+1);
+				courses[i] = request.getParameter(param);
 				courses[i]=courses[i].trim();
 			}
 
@@ -384,14 +315,12 @@ if (maxClasses!=courses.length)
 
 out.println("<h3>Options:</h3><br><br>");
 
-out.println("<form id='myform4' name='myform4' method='post'>");
 for (int i=0; i<subsets.size(); ++i) {
 	if (subsets.get(i).size() == maxClasses) {
-
 		String idVals = new String("");
-		out.println("<table border='1' style='width:50%'>");
+		out.println("<table class='Table'>");
 		out.println("<tr>");
-		out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th><th><div class='divider'><button type='submit' onclick='onSubmitForm2(\"user3\",\"table" + (i+1) + "\")'>Enroll</button></div><p id='user3' name='user3' hidden></p></th></tr>");
+		out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th><th class='specialTh'><button type='button' onclick='pageThreeOnSubmitForm(\"table" + (i+1) + "\")'>Enroll</button></th></tr>");
 
 		for (int j=0; j<subsets.get(i).size(); ++j) {
 			out.println("<tr>");
@@ -408,16 +337,16 @@ for (int i=0; i<subsets.size(); ++i) {
 
 			out.println("</tr>");
 		}
-		out.println("</table><input type='hidden' id='table" + (i+1) + "' value='" + idVals + "'/><br><br>");
+		out.println("</table><input type='hidden' id='table" + (i+1) + "' name='table" + (i+1) + "' value='" + idVals + "'/><br><br>");
 	}
 }
-out.println("</form><button onclick='goBack()'>Back</button>");
+out.println("<button onclick='goBack()'>Back</button>");
 }
 
 else if (task.contains("dump")) {
 	Connection db;
 	Class.forName("com.mysql.jdbc.Driver").newInstance();
-	db= DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduling","root","discipline");
+	db= DriverManager.getConnection("jdbc:mysql://localhost:3306/Scheduling","root","discipline");
 	Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
 	ResultSet.CONCUR_READ_ONLY);
 	Statement stmt2 = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
@@ -434,8 +363,7 @@ else if (task.contains("dump")) {
 }
 
 else {
-	String courseID=new String(request.getQueryString());
-	courseID=courseID.substring(courseID.indexOf("course=")+7);
+	String courseID=new String(request.getParameter("remove"));
 	Connection db;
 	Class.forName("com.mysql.jdbc.Driver").newInstance();
 	db= DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduling","root","discipline");
@@ -476,7 +404,9 @@ else {
 	}
 
 	%>
-
-
+	<input id="user" name="user" value="<%=user%>" hidden>
+	<input id="scheduleType" name="scheduleType" value="<%=task%>" hidden>
+	<input id="tableNum" name="tableNum" value="" hidden>
+	</form>
 </body>
 </html>

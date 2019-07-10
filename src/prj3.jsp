@@ -1,25 +1,15 @@
 <html>
+<head>
+	<link rel="stylesheet" href="styling.css">
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/scripting.js"></script>
+</head>
 <body>
-	<script type="text/javascript">
-
-	function goBack() {
-		window.history.back();
-	}
-
-	function close() {
-		self.close();
-	}
-
-	</script>
 	<%@page import="java.sql.*"%>
 	<%
 
+	String scheduleType=new String(request.getParameter("scheduleType"));
 
 	try {
-
-		String scheduleType=new String(request.getParameter("task"));
-		scheduleType=scheduleType.substring(0,scheduleType.indexOf("-"));
-
 
 		if (scheduleType.contains("regEnroll")) {
 
@@ -89,7 +79,7 @@
 			query="SELECT * FROM " + user;
 			rs=stmt.executeQuery(query);
 			num_fields = rs.getMetaData().getColumnCount();
-			out.println("<table border='1' style='width:50%'>");
+			out.println("<table>");
 			out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
 			while (rs.next()) {
 				out.println("<tr>");
@@ -110,9 +100,9 @@
 		}
 
 		else if (scheduleType.contains("smartEnroll")) {
-			String user = new String(request.getParameter("task"));
-			String ids = new String(user.substring(user.indexOf("-")+1,user.indexOf("*")));
-			user = user.substring(user.indexOf("*")+1);
+			String user = new String(request.getParameter("user"));
+			String table = new String(request.getParameter("tableNum"));
+			String ids = new String(request.getParameter(table));
 			String[] IDs = ids.split(",");
 			for (int i=0; i<IDs.length; ++i) {
 				IDs[i]=IDs[i].trim();
@@ -197,7 +187,7 @@
 			query="SELECT * FROM " + user;
 			rs=stmt.executeQuery(query);
 			num_fields = rs.getMetaData().getColumnCount();
-			out.println("<table border='1' style='width:50%'>");
+			out.println("<table>");
 			out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
 			while (rs.next()) {
 				out.println("<tr>");

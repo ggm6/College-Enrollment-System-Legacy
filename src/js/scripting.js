@@ -42,21 +42,15 @@ function courseSearchCheckBlank() {
 }
 
 function setTask(v) {
-	v += "/user=";
-	if (!document.getElementById("loginID").value=="")
-		v += document.getElementById("loginID").value;
-	else
-		v += document.getElementById("createAccountID").value;
 	let task=document.getElementById("task");
-	task.innerHTML=v;
-	var url = document.URL;
-	url = url.replace("index.html","prj.jsp")
-	var str=url + "?task=" + document.getElementById("task").innerHTML;
-	document.myform.action=str;
+	task.value=v;
 }
 
 function pageOneOnSubmitForm(choice) {
 	setTask(choice);
+	var url = document.URL;
+	url = url.replace("index.html","prj.jsp")
+	document.myform.action=url;
 	var go=false;
 
 	var v1id=document.getElementById("loginID").value;
@@ -81,15 +75,7 @@ function goBack() {
 	window.history.back();
 }
 
-function setUser() {
-	var task = getUrlParam('task','Empty');
-	task=task.substring(task.search('=')+1);
-	let user=document.getElementById("user");
-	user.innerHTML=task;
-}
-
 function displayCourseSearch() {
-	setUser();
 	let buildSmartSchedule=document.getElementById("buildSmartSchedule");
 	buildSmartSchedule.style.display="none";
 	let courseSearch=document.getElementById("courseSearch");
@@ -97,7 +83,6 @@ function displayCourseSearch() {
 }
 
 function displayBuildSmartSchedule() {
-	setUser();
 	let courseSearch=document.getElementById("courseSearch");
 	courseSearch.style.display="none";
 	let buildSmartSchedule=document.getElementById("buildSmartSchedule");
@@ -105,7 +90,7 @@ function displayBuildSmartSchedule() {
 }
 
 function buildSmartScheduleCheckBlank() {
-	var numCourses = parseInt(document.getElementById("smartSchedulingNumCourses").innerHTML,10);
+	var numCourses = parseInt(document.getElementById("smartSchedulingNumCourses").value);
 	var flag = true;
 	var i;
 	for (i = 1; i <= numCourses; i++) {
@@ -124,67 +109,74 @@ function buildSmartScheduleCheckBlank() {
 	return go;
 }
 
-function setSchedulingChoice(choice) {
-	if (choice == "regEnroll")
-		document.getElementById("schedulingChoice").innerHTML = "regEnroll";
-	else if (choice == "smartEnroll")
-		document.getElementById("schedulingChoice").innerHTML = "smartEnroll";
-
-	pageTwoOnSubmitForm();
-}
-
-function addCourse(buttonNum) {
+function addCourse() {
+	let button = document.getElementById("smartSchedulingNumCourses").value;
+	buttonNum = parseInt(button);
 	buttonNum = buttonNum + 1;
-	document.getElementById("smartSchedulingNumCourses").innerHTML = buttonNum;
-	var markup = document.documentElement.innerHTML;
-	var addition = "<br><br><strong>Course " + buttonNum + ":<br><input id=\"smartScheduleCourseName" + buttonNum + "\"><br>" +
-	"<button type=\"button\" id=\"courseNum" + buttonNum + "\" onclick=\"addCourse(" + buttonNum + ")" +
-	"\">Add Course</button><div class=\"Divider\"></div><button type=\"button\" id=\"submitButton\" " +
-	"onclick=\"setSchedulingChoice('smartEnroll')\">" + "Submit</button>";
-	buttonNum = buttonNum - 1;
-	markup = markup.replace("<br><button type=\"button\" id=\"courseNum" + buttonNum + "\" onclick=\"addCourse(" + buttonNum + ")" +
-	"\">Add Course</button><div class=\"Divider\"></div><button type=\"button\" id=\"submitButton\" " +
-	"onclick=\"setSchedulingChoice('smartEnroll')\">" + "Submit</button>",addition);
-	document.documentElement.innerHTML = markup;
+	document.getElementById("smartSchedulingNumCourses").value = buttonNum;
+	button = buttonNum;
+	var newLine = document.createElement("input");
+	newLine.id = "smartScheduleCourseName" + button;
+	newLine.name = "smartScheduleCourseName" + button;
+	var divider = document.getElementById("Divider");
+	var addCourseButton = document.getElementById("courseNum");
+	var submitButton = document.getElementById("submitButton");
+	addCourseButton.parentNode.removeChild(addCourseButton);
+	divider.parentNode.removeChild(divider);
+	submitButton.parentNode.removeChild(submitButton);
+	var div = document.getElementById("buildSmartSchedule");
+	var text = document.createElement("strong");
+	text.innerHTML = "Course " + button + ":";
+	div.appendChild(document.createElement("br"));
+	div.appendChild(text);
+	div.appendChild(document.createElement("br"));
+	div.appendChild(newLine);
+	div.appendChild(document.createElement("br"));
+	div.appendChild(addCourseButton);
+	div.appendChild(divider);
+	div.appendChild(submitButton);
 }
 
-function pageTwoOnSubmitForm() {
-	var go;
-	let schedulingChoice=document.getElementById("schedulingChoice");
-	var url = document.URL;
-	url = url.slice(0,url.indexOf("prj"));
-	var str=url + "prj2.jsp?task=";
 
-	if (schedulingChoice.innerHTML=="regEnroll") {
+function pageTwoOnSubmitForm(removeID) {
+	document.getElementById("remove").value = removeID;
+	let schedulingChoice=document.getElementById("task").value;
+	var go = true;
+	if (schedulingChoice=="regEnroll")
 		go = courseSearchCheckBlank();
-		str += "regEnroll";
-	}
-	else if (schedulingChoice.innerHTML=="smartEnroll") {
+	else if (schedulingChoice=="smartEnroll") 
 		go = buildSmartScheduleCheckBlank();
-		str += "smartEnroll";
-	}
-	else if (schedulingChoice.innerHTML==""){
-		setUser();
+	else if (schedulingChoice=="dump")
 		go = confirm("WARNING: You are about to remove all classes in your schedule!");
-		str += "dump";
-	}
-	str += "/user=" + document.getElementById("user").innerHTML;
 
-	document.myform2.action=str;
+	var url = document.URL;
+	url = url.replace("prj","prj2");
+	document.myform2.action=url;
 	if (go)
 		document.myform2.submit();
 }
 
-function pageThreeOnSubmitForm(id) {
-	var task = getUrlParam('task','Empty');
-	task=task.substring(task.search('-')+1);
-	let user=document.getElementById("user");
-	user.innerHTML=task;
+function enrollWithIDCheckBlank() {
+	let id=document.getElementById("courseID3");
+	if (id.value=="") {
+		alert("Error: Please select actual course ID");
+		return false;
+	}
+	return true;
+}
+
+function pageThreeOnSubmitForm(table) {
 	var url = document.URL;
-	url = url.slice(0,url.indexOf("prj"));
-	var str = url + "prj2.jsp?task=remove-" + user.innerHTML + "/course=" + id;
-	document.myform2.action=str;
-	document.getElementById("myform3").submit();
+	url = url.replace("prj2","prj3");
+	var form = document.getElementById("myform");
+	form.action = url;
+	var go = true;
+	if (table == "")
+		go=enrollWithIDCheckBlank();
+	else
+		document.getElementById("tableNum").value = table;
+	if (go)
+		form.submit();
 }
 
 function getUrlParam(parameter, defaultvalue){
@@ -201,4 +193,8 @@ function getUrlVars() {
         vars[key] = value;
     });
     return vars;
+}
+
+function close() {
+	self.close();
 }

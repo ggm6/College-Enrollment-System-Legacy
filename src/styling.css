@@ -29,3 +29,17 @@
 .hiddenSubmit {
 	display: none;
 }
+
+table {
+	width: 50%;
+	border: 1px solid black;
+}
+
+th,td,tr {
+	border: 1px solid black;
+	text-align: center;
+}
+
+.specialTh {
+	border: none;
+}
