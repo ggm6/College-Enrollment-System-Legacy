@@ -4,7 +4,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/scripting.js"></script>
 </head>
 <body>
-<form id="myform2" name="myform2" method="post" onsubmit="pageTwoOnSubmitForm('')">
+<form id="myform2" name="myform2" method="post">
 
 <%@page import="java.sql.*"%>
 <%
@@ -71,7 +71,7 @@
 						out.println(rs.getString(i+1));
 						out.println("</td>");
 					}
-					out.println("<td align = 'center'><a href='javascript:pageTwoOnSubmitForm(" + courseID + ");'>Remove</a></td>");
+					out.println("<td align = 'center'><a href='javascript:pageTwoOnSubmitForm1(" + courseID + ");'>Remove</a></td>");
 					out.println("</tr>");
 				}
 				out.println("</table><br>");
@@ -203,7 +203,7 @@
 			int num_fields = rs.getMetaData().getColumnCount();			
 			if (!rs.next()) {
 				out.println("Your search yielded no results. (page no longer active)");
-				out.println("<br><button type='button onclick='goBack()'>Back</button>");
+				out.println("<br><button type='button' onclick='goBack()'>Back</button>");
 				return;
 			}
 			rs.beforeFirst();
@@ -241,12 +241,12 @@
 	Department:<br><input id="department" name="department2" cols="20" rows="1"></textarea><br>
 	Teacher:<br><input id="teacher" name="teacher2" cols="20" rows="1"></textarea><br>
 	Time:<br><input id="time" name="time2" cols="20" rows="1" placeholder="'1:00PM-2:15PM'"></textarea><br>
-	<br><button type="submit" onclick="setTask('regEnroll')">Submit</button>
+	<br><button type="button" onclick="pageTwoOnSubmitForm2('regEnroll')">Submit</button>
 </div>
 <br><div id="buildSmartSchedule" class="Form"><br>
 <h3>Type the courses in order of priority:</h3><strong><em>Please be exact</em><br><br>
 Course 1:<br><input id="smartScheduleCourseName1" name="smartScheduleCourseName1">
-<br><button type="button" id="courseNum" onclick="addCourse()">Add Course</button><div id="Divider" class="Divider"></div><button  type="submit" id="submitButton" onclick="setTask('smartEnroll')">Submit</button>
+<br><button type="button" id="courseNum" onclick="addCourse()">Add Course</button><div id="Divider" class="Divider"></div><button  type="button" id="submitButton" onclick="pageTwoOnSubmitForm2('smartEnroll')">Submit</button>
 </strong>
 </div>
 <input id="user" name="user" value="<%=trueID%>" hidden>

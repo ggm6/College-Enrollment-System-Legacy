@@ -4,7 +4,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/scripting.js"></script>
 </head>
 <body>
-	<form id='myform' name='myform' method='post'>
+	<form id='myform3' name='myform3' method='post'>
 
 	<%@page import="java.sql.*"%>
 	<%@page import="java.util.*"%>
@@ -114,17 +114,18 @@
 				out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
 				while (rs.next()) {
 					out.println("<tr>");
+					String courseID = rs.getString(1);
 					for (int i=0; i<num_fields; ++i)
 					{
 						out.println("<td align = 'center'>");
 						out.println(rs.getString(i+1));
 						out.println("</td>");
 					}
+					out.println("<td align = 'center'><a href='javascript:pageThreeOnSubmitForm1(" + courseID + ");'>Add</a></td>");
 					out.println("</tr>");
 				}
 				out.println("</table><br><br>");
-
-			out.println("<div id='disp'>Enroll w/ Course ID:<br><textarea style='resize:none;' cols='20' rows='1' id='courseID3' name='courseID3'></textarea><br><button type='button' onclick='pageThreeOnSubmitForm(\"\")'>Enroll</button><button type='button' onclick='goBack()'>Back</button></div>");
+				out.println("<button type='button' onclick='goBack()'>Back</button>");
 
 			rs.close();
 			stmt.close();
@@ -138,6 +139,7 @@
 			ResultSet.CONCUR_READ_ONLY);
 
 			int numCourses = Integer.parseInt(request.getParameter("smartSchedulingNumCourses"));
+			int chooseNum = 0;   // sequence length
 			String courses[] = new String[numCourses];
 
 			for (int i=0; i<numCourses; ++i) {
@@ -149,10 +151,14 @@
 
 			String query=new String("");
 			query="SELECT * FROM Courses";
-			if (!courses[0].equals("")) {
-				for (int i=0; i<courses.length; ++i) {
-					if (i==0)
+			boolean findFirst = false;
+			for (int i=0; i<courses.length; ++i) {
+				if (courses[i] != "") {
+					++chooseNum;
+					if (findFirst == false) {
 						query += " WHERE course_name='" + courses[0] + "'";
+						findFirst = true;
+					}
 					else
 						query += " OR course_name='" + courses[i] + "'";
 				}
@@ -173,22 +179,22 @@
 			ArrayList<ArrayList<String[]>> courseConflicts=new ArrayList<ArrayList<String[]>>(rsNumRows);
 			ArrayList<String[]> allCourses = new ArrayList<String[]>(rsNumRows);
 
-				int pos=1;
 				while (rs.next()) {
-
 					String[] course=new String[columnCount];
 					for (int j=0; j<columnCount; ++j) {
 						course[j] = rs.getString(j+1);
 						course[j]=course[j].trim();
 					}
-
-						allCourses.add(course);
+					allCourses.add(course);
 				}
 				rs.beforeFirst();
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int chooseNum = courses.length;                            // sequence length  
+/* Following code adapted from: 
+	 https://stackoverflow.com/questions/29910312/algorithm-to-get-all-the-combinations-of-size-n-from-an-array-java
+   by answerer: Alex Salauyou
+*/
 
-ArrayList<ArrayList<String[]>> subsets = new ArrayList<>();
+ArrayList<ArrayList<String[]>> schedules = new ArrayList<>();
 
 int[] s = new int[chooseNum];                 // here we'll keep indices 
                                        // pointing to elements in input array
@@ -196,7 +202,7 @@ int[] s = new int[chooseNum];                 // here we'll keep indices
 if (chooseNum <= allCourses.size()) {
     // first index sequence: 0, 1, 2, ...
     for (int i = 0; (s[i] = i) < chooseNum - 1; i++);  
-    	subsets.add(getSubset(allCourses, s));
+    	schedules.add(getSubset(allCourses, s));
     for(;;) {
         int i;
         // find position of item that can be incremented
@@ -208,16 +214,16 @@ if (chooseNum <= allCourses.size()) {
         for (++i; i < chooseNum; i++) {    // fill up remaining items
             s[i] = s[i-1] + 1; 
         }
-        subsets.add(getSubset(allCourses, s));
+        schedules.add(getSubset(allCourses, s));
     }
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-for (int i=0; i<subsets.size(); ++i) {
+for (int i=0; i<schedules.size(); ++i) {
 	boolean duplicate=false;
-	for (int j=0; j<subsets.get(i).size()-1; ++j) {
-		for(int k=j+1;k<subsets.get(i).size();++k){
-    		if ( subsets.get(i).get(j)[1].equals(subsets.get(i).get(k)[1]) ) {
+	for (int j=0; j<schedules.get(i).size()-1; ++j) {
+		for(int k=j+1;k<schedules.get(i).size();++k){
+    		if ( schedules.get(i).get(j)[1].equals(schedules.get(i).get(k)[1]) ) {
     			duplicate=true;
     			break;
     		}
@@ -226,19 +232,19 @@ for (int i=0; i<subsets.size(); ++i) {
 			break;
 	}
 	if (duplicate==true) {
-		subsets.remove(i);
+		schedules.remove(i);
 		--i;
 	}
 }
 
-for (int i=0; i<subsets.size(); ++i) {
+for (int i=0; i<schedules.size(); ++i) {
 
 	int courseFind=courses.length-1;
 	while (courseFind>=0) {
 
-		for (int j=0; j<subsets.get(i).size(); ++j) {
-			if ( subsets.get(i).get(j)[1].equals(courses[courseFind]) ) {
-				String[] course = (subsets.get(i).get(j));
+		for (int j=0; j<schedules.get(i).size(); ++j) {
+			if ( schedules.get(i).get(j)[1].equals(courses[courseFind]) ) {
+				String[] course = (schedules.get(i).get(j));
 				String time[]=new String[2];
 				time=course[columnCount-1].split("-");
 				int index=time[0].indexOf(':');
@@ -260,9 +266,9 @@ for (int i=0; i<subsets.size(); ++i) {
 				totalTime[0]=hoursBeginInt+(double) minutesBeginInt/60;
 				totalTime[1]=hoursEndInt+(double) minutesEndInt/60;
 
-				for (int q=0; q<subsets.get(i).size(); ++q) {
+				for (int q=0; q<schedules.get(i).size(); ++q) {
 					if (q!=j) {
-						String[] courseCheck = subsets.get(i).get(q);
+						String[] courseCheck = schedules.get(i).get(q);
 						String checkTime[]=new String[2];
 						checkTime=courseCheck[columnCount-1].split("-");
 						index=checkTime[0].indexOf(':');
@@ -285,8 +291,8 @@ for (int i=0; i<subsets.size(); ++i) {
 						checkTotalTime[1]=checkHoursEndInt+(double) checkMinutesEndInt/60;
 
 						if ( ((totalTime[0] >= checkTotalTime[0]) && (totalTime[0] <= checkTotalTime[1])) || ((totalTime[1] >= checkTotalTime[0]) && (totalTime[1] <= checkTotalTime[1])) ) {
-							subsets.get(i).remove(j);
-							j=subsets.get(i).size();
+							schedules.get(i).remove(j);
+							j=schedules.get(i).size();
 							break;
 						}
 					}
@@ -297,41 +303,40 @@ for (int i=0; i<subsets.size(); ++i) {
 	}
 }
 
-
 int maxClasses=0;
-for (int i=0; i<subsets.size(); ++i) {
-	if (subsets.get(i).size()>maxClasses)
-		maxClasses=subsets.get(i).size();
+for (int i=0; i<schedules.size(); ++i) {
+	if (schedules.get(i).size()>maxClasses)
+		maxClasses=schedules.get(i).size();
 }
 
-for (int i=0; i<subsets.size(); ++i) {
-	if (subsets.get(i).size() != maxClasses)
-		subsets.remove(i);
+for (int i=0; i<schedules.size(); ++i) {
+	if (schedules.get(i).size() != maxClasses)
+		schedules.remove(i);
 } 
 
 
-if (maxClasses!=courses.length)
+if (maxClasses!=chooseNum)
 	out.println("<h3>Unfortunately, it is impossible to take all of those courses next semester</h3>");
 
 out.println("<h3>Options:</h3><br><br>");
 
-for (int i=0; i<subsets.size(); ++i) {
-	if (subsets.get(i).size() == maxClasses) {
+for (int i=0; i<schedules.size(); ++i) {
+	if (schedules.get(i).size() == maxClasses) {
 		String idVals = new String("");
 		out.println("<table class='Table'>");
 		out.println("<tr>");
 		out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th><th class='specialTh'><button type='button' onclick='pageThreeOnSubmitForm(\"table" + (i+1) + "\")'>Enroll</button></th></tr>");
 
-		for (int j=0; j<subsets.get(i).size(); ++j) {
+		for (int j=0; j<schedules.get(i).size(); ++j) {
 			out.println("<tr>");
 			String[] myString = new String[columnCount];
-			myString=subsets.get(i).get(j);
+			myString=schedules.get(i).get(j);
 
 			for (int z=0; z<myString.length; ++z) {
 				out.println("<td align = 'center'>" + myString[z] + "</td>");
-				if (z==0 && j<subsets.get(i).size()-1)
+				if (z==0 && j<schedules.get(i).size()-1)
 					idVals += (myString[z] + ",");
-				else if (z==0 && j == subsets.get(i).size()-1)
+				else if (z==0 && j == schedules.get(i).size()-1)
 					idVals += myString[z];
 			}
 
@@ -405,6 +410,7 @@ else {
 
 	%>
 	<input id="user" name="user" value="<%=user%>" hidden>
+	<input id="add" name="add" value="" hidden>
 	<input id="scheduleType" name="scheduleType" value="<%=task%>" hidden>
 	<input id="tableNum" name="tableNum" value="" hidden>
 	</form>

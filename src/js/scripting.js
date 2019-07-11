@@ -31,9 +31,12 @@ function courseSearchCheckBlank() {
 	let department=document.getElementById("department");
 	let teacher=document.getElementById("teacher");
 	let time=document.getElementById("time");
-	var go;
+	var go = false;
 	if (id.value=="" && name.value=="" && department.value=="" && teacher.value=="" && time.value=="") {
 		go=confirm("WARNING: You are about return all courses in the system!");
+	}
+	else if (id.value!="" && isNaN(parseInt(id.value))) {
+		alert("Please enter a valid ID.");
 	}
 	else
 		go=true;
@@ -138,9 +141,17 @@ function addCourse() {
 }
 
 
-function pageTwoOnSubmitForm(removeID) {
+function pageTwoOnSubmitForm1(removeID) {
+	setTask('Remove');
 	document.getElementById("remove").value = removeID;
-	let schedulingChoice=document.getElementById("task").value;
+	var url = document.URL;
+	url = url.replace("prj","prj2");
+	document.myform2.action=url;
+	document.myform2.submit();
+}
+
+function pageTwoOnSubmitForm2(schedulingChoice) {
+	setTask(schedulingChoice);
 	var go = true;
 	if (schedulingChoice=="regEnroll")
 		go = courseSearchCheckBlank();
@@ -165,10 +176,18 @@ function enrollWithIDCheckBlank() {
 	return true;
 }
 
-function pageThreeOnSubmitForm(table) {
+function pageThreeOnSubmitForm1(addID) {
+	document.getElementById("add").value = addID;
 	var url = document.URL;
 	url = url.replace("prj2","prj3");
-	var form = document.getElementById("myform");
+	document.myform3.action=url;
+	document.myform3.submit();
+}
+
+function pageThreeOnSubmitForm2(table) {
+	var url = document.URL;
+	url = url.replace("prj2","prj3");
+	var form = document.getElementById("myform3");
 	form.action = url;
 	var go = true;
 	if (table == "")
