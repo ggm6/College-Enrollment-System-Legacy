@@ -4,4 +4,4 @@ Project simulates creating accounts, searching and enrolling in courses from dat
 
 Web application can be accessed at (for now):
 
-    http://63ad9c7a.ngrok.io/Scheduling/index.html
+    http://6cf424d9.ngrok.io/Scheduling/index.html
