@@ -110,18 +110,18 @@
 			}
 		
 				rs.beforeFirst();
-				out.println("<table border='1' style='width:50%'>");
-				out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
+				out.println("<table>");
+				out.println("<tr><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
 				while (rs.next()) {
 					out.println("<tr>");
 					String courseID = rs.getString(1);
 					for (int i=0; i<num_fields; ++i)
 					{
-						out.println("<td align = 'center'>");
+						out.println("<td>");
 						out.println(rs.getString(i+1));
 						out.println("</td>");
 					}
-					out.println("<td align = 'center'><a href='javascript:pageThreeOnSubmitForm1(" + courseID + ");'>Add</a></td>");
+					out.println("<td><a href='javascript:pageThreeOnSubmitForm1(" + courseID + ");'>Add</a></td>");
 					out.println("</tr>");
 				}
 				out.println("</table><br><br>");
@@ -167,6 +167,21 @@
 			ResultSet rs=stmt.executeQuery(query);
 			int columnCount=rs.getMetaData().getColumnCount();
 			int rsNumRows=0;
+			for (int i=0; i<courses.length; ++i) {
+				boolean badCourse = true;
+				while (rs.next()) {
+					if (rs.getString(2).equals(courses[i])) {
+						badCourse = false;
+						break;
+					}
+				}
+				if (badCourse) {
+					out.println("\"" + courses[i] + "\" is not a real course. (page no longer active)");
+					out.println("<br><button type='button' onclick='goBack()'>Back</button>");
+					return;
+				}
+				rs.beforeFirst();
+			}
 			while (rs.next())
 				++rsNumRows;
 			if (rsNumRows==0) {
@@ -323,9 +338,9 @@ out.println("<h3>Options:</h3><br><br>");
 for (int i=0; i<schedules.size(); ++i) {
 	if (schedules.get(i).size() == maxClasses) {
 		String idVals = new String("");
-		out.println("<table class='Table'>");
+		out.println("<table>");
 		out.println("<tr>");
-		out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th><th class='specialTh'><button type='button' onclick='pageThreeOnSubmitForm(\"table" + (i+1) + "\")'>Enroll</button></th></tr>");
+		out.println("<tr><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th><th class='specialTh'><button type='button' onclick='pageThreeOnSubmitForm2(\"table" + (i+1) + "\")'>Enroll</button></th></tr>");
 
 		for (int j=0; j<schedules.get(i).size(); ++j) {
 			out.println("<tr>");
@@ -333,7 +348,7 @@ for (int i=0; i<schedules.size(); ++i) {
 			myString=schedules.get(i).get(j);
 
 			for (int z=0; z<myString.length; ++z) {
-				out.println("<td align = 'center'>" + myString[z] + "</td>");
+				out.println("<td>" + myString[z] + "</td>");
 				if (z==0 && j<schedules.get(i).size()-1)
 					idVals += (myString[z] + ",");
 				else if (z==0 && j == schedules.get(i).size()-1)
@@ -381,13 +396,13 @@ else {
 	query = "SELECT * from " + user;
 	ResultSet rs=stmt.executeQuery(query);
 	int num_fields = rs.getMetaData().getColumnCount();
-	out.println("<table border='1' style='width:50%'>");
-	out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
+	out.println("<table>");
+	out.println("<tr><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
 	while (rs.next()) {
 		out.println("<tr>");
 		for (int i=0; i<num_fields; ++i)
 		{
-			out.println("<td align = 'center'>");
+			out.println("<td>");
 			out.println(rs.getString(i+1));
 			out.println("</td>");
 		}

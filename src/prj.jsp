@@ -61,23 +61,23 @@
 				num_fields = rs.getMetaData().getColumnCount();
 				
 				out.println("<table>");
-				out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
+				out.println("<tr><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
 				while (rs.next()) {
 					out.println("<tr>");
 					String courseID = rs.getString(1);
 					for (int i=0; i<num_fields; ++i)
 					{
-						out.println("<td align = 'center'>");
+						out.println("<td>");
 						out.println(rs.getString(i+1));
 						out.println("</td>");
 					}
-					out.println("<td align = 'center'><a href='javascript:pageTwoOnSubmitForm1(" + courseID + ");'>Remove</a></td>");
+					out.println("<td><a href='javascript:pageTwoOnSubmitForm1(" + courseID + ");'>Remove</a></td>");
 					out.println("</tr>");
 				}
 				out.println("</table><br>");
 
 				rs.close();
-				out.println("<button type='button' onclick='displayCourseSearch()'>Begin Enrollment</button><div class='divider'></div><button type='button' onclick='displayBuildSmartSchedule()'>Build Smart Schedule</button><div class='divider'></div><button type='submit' onclick='setTask(\"dump\")'>Dump Schedule</button><div class='divider'></div><button type='button' onclick='goBack()'>Back</button><br>");
+				out.println("<button type='button' onclick='displayCourseSearch()'>Begin Enrollment</button><div class='divider'></div><button type='button' onclick='displayBuildSmartSchedule()'>Build Smart Schedule</button><div class='divider'></div><button type='submit' onclick='pageTwoOnSubmitForm2(\"dump\")'>Dump Schedule</button><div class='divider'></div><button type='button' onclick='goBack()'>Back</button><br>");
 			}
 			else if (id.equals(retrID) && !password.equals(retrPassword))
 			{
@@ -207,13 +207,13 @@
 				return;
 			}
 			rs.beforeFirst();
-			out.println("<table border='1' class='Table'>");
-			out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
+			out.println("<table>");
+			out.println("<tr><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
 			while (rs.next()) {
 				out.println("<tr>");
 				for (int i=0; i<num_fields; ++i)
 				{
-					out.println("<td align = 'center'>");
+					out.println("<td>");
 					out.println(rs.getString(i+1));
 					out.println("</td>");
 				}

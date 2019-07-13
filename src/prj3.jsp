@@ -65,12 +65,12 @@
 			rs=stmt.executeQuery(query);
 			num_fields = rs.getMetaData().getColumnCount();
 			out.println("<table>");
-			out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
+			out.println("<tr><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
 			while (rs.next()) {
 				out.println("<tr>");
 				for (int i=0; i<num_fields; ++i)
 				{
-					out.println("<td align = 'center'>");
+					out.println("<td>");
 					out.println(rs.getString(i+1));
 					out.println("</td>");
 				}
@@ -173,12 +173,12 @@
 			rs=stmt.executeQuery(query);
 			num_fields = rs.getMetaData().getColumnCount();
 			out.println("<table>");
-			out.println("<tr align = 'center'><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
+			out.println("<tr><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
 			while (rs.next()) {
 				out.println("<tr>");
 				for (int i=0; i<num_fields; ++i)
 				{
-					out.println("<td align = 'center'>");
+					out.println("<td>");
 					out.println(rs.getString(i+1));
 					out.println("</td>");
 				}
