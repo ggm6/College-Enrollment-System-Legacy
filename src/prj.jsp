@@ -43,8 +43,8 @@
 				out.println("<h3>Successfully logged in!</h3>");
 				query="SELECT * FROM " + loginID;
 				rs=stmt.executeQuery(query);
-				boolean isSchedule = true;
-				out.println("<h3>Your Schedule:</h3>" + printCoursesTable(rs,isSchedule) + "<br>");
+				String courseTableCommand = "Remove";
+				out.println("<h3>Your Schedule:</h3>" + printCoursesTable(rs,courseTableCommand) + "<br>");
 				out.println(printOptionsAfterLogin());
 				rs.close();
 			}
@@ -92,8 +92,7 @@
 					return;
 				}
 				rs.beforeFirst();
-				boolean isSchedule = false;
-				out.println(printCoursesTable(rs,isSchedule));
+				out.println(printCoursesTable(rs,""));
 				out.println(printBackButton());	
 				return;	
 			}
@@ -107,11 +106,11 @@
 		}
 	%>
 	<div id="courseSearch" class="Form"> <br><h3>Please provide some criteria for course search</h3>
-		Course ID:<br><input id="courseID" name="coursecreateAccountID" cols="20" rows="1"></textarea><br>
-		Course Name:<br><input id="courseName" name="courseName2" cols="20" rows="1"></textarea><br>
-		Department:<br><input id="department" name="department2" cols="20" rows="1"></textarea><br>
-		Teacher:<br><input id="teacher" name="teacher2" cols="20" rows="1"></textarea><br>
-		Time:<br><input id="time" name="time2" cols="20" rows="1" placeholder="'1:00PM-2:15PM'"></textarea><br>
+		Course ID:<br><input id="courseID" name="courseSearchID" cols="20" rows="1"></textarea><br>
+		Course Name:<br><input id="courseName" name="courseSearchName" cols="20" rows="1"></textarea><br>
+		Department:<br><input id="department" name="courseSearchDepartment" cols="20" rows="1"></textarea><br>
+		Teacher:<br><input id="teacher" name="courseSearchTeacher" cols="20" rows="1"></textarea><br>
+		Time:<br><input id="time" name="courseSearchTime" cols="20" rows="1" placeholder="'1:00PM-2:15PM'"></textarea><br>
 		<br><button type="button" onclick="pageTwoOnSubmitForm2('regEnroll')">Submit</button>
 	</div><br>
 	<div id="buildSmartSchedule" class="Form"><br>
