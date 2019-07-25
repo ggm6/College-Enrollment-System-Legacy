@@ -152,7 +152,7 @@
 		return query;
 	}
 
-	public String buildSmartEnrollSearchQuery(ArrayList<String> courses) {
+	public String buildSmartEnrollSearchQueryByName(ArrayList<String> courses) {
 		String query = "SELECT * FROM Courses";
 		boolean foundFirst = false;
 		for (int pos = 0; pos < courses.size(); ++pos) {
@@ -164,6 +164,38 @@
 				foundFirst = true;
 			}	
 		}
+		return query;
+	}
+
+	public String buildSmartEnrollSearchQueryByIDs(String[] IDs) {
+		String query = "SELECT * FROM Courses";
+		boolean foundFirst = false;
+		for (int i = 0; i < IDs.length; ++i) {
+			String id = IDs[i];
+			if (!id.equals("")) {
+				if (foundFirst)
+					query += " OR course_id=" + id;
+				else {
+					query += " WHERE course_id=" + id;
+					foundFirst = true;
+				}	
+			}
+		}	
+		return query;
+	}
+
+	public String buildEnrollInsertQuery(ArrayList<String> fields, String user) {
+		int num_fields = fields.size();
+		String query="INSERT INTO " + user + " values (";
+		for (int fieldPos = 0; fieldPos < num_fields; ++fieldPos) {
+			String field = fields.get(fieldPos);
+			field = fixForApostrophe(field);
+			if (fieldPos == 0)
+				query += field;
+			else
+				query += ",'" + field + "'";
+		}
+		query += ")";
 		return query;
 	}
 
@@ -292,11 +324,71 @@
 	public void resolveTimeConflictsInSchedules(ArrayList<Schedule> allPossibleSchedules, ArrayList<String> inputCourses) {
 		for (int schedulePos = 0; schedulePos < allPossibleSchedules.size(); ++schedulePos) {
 			Schedule schedule = allPossibleSchedules.get(schedulePos);
-			for (int priority = inputCourses.size()-1; priority >= 0; --priority) {
+			// inputCourses are in order of priority
+			for (int priority = inputCourses.size()-1; priority >= 0; --priority) {  
 				String currentLeastImportantCourse = inputCourses.get(priority);
-				schedule.removeThisCourseIfTimeConflict(currentLeastImportantCourse);
+				int coursePos = schedule.findThisCourse(currentLeastImportantCourse);
+				if (coursePos != -1)
+					schedule.removeHereIfTimeConflict(coursePos);
 			}
 			allPossibleSchedules.set(schedulePos,schedule);
 		}
+	}
+
+	public boolean userIsEnrolledInCourse(ResultSet rs, String courseID) throws SQLException {
+		while (rs.next()) {
+			if (courseID.equals(rs.getString(1))) {
+				rs.beforeFirst();
+				return true;
+			}
+		}
+		rs.beforeFirst();
+		return false;
+	}
+
+	public ArrayList<String> fillFieldsFromResultSet(ResultSet rs) throws SQLException {
+		rs.beforeFirst();
+		rs.next();
+		ArrayList<String> fields = new ArrayList<String>();
+		int num_fields = rs.getMetaData().getColumnCount();
+		for (int fieldPos = 0; fieldPos < num_fields; ++fieldPos) {
+			String field = rs.getString(fieldPos+1);
+			fields.add(field);
+		}
+		rs.beforeFirst();
+		return fields;
+	}
+
+	public ArrayList<String> getStatusOfEnrollment(ResultSet rs, String[] IDs) throws SQLException {
+		ArrayList<String> enrollStatusMsges = new ArrayList<String>();
+		for (int i = 0; i < IDs.length; ++i) {
+			String id = IDs[i];
+			if (userIsEnrolledInCourse(rs, id))
+				enrollStatusMsges.add("<h4>You are already enrolled in " + id + "!</h4><br>");
+			else
+				enrollStatusMsges.add("<h4>" + id + " added successfully!</h4><br>");
+		}
+		rs.beforeFirst();
+		return enrollStatusMsges;
+	}
+
+	public String printEnrollStatusMsges(ArrayList<String> msges) {
+		String bigMsg = "";
+		for (int i = 0; i < msges.size(); ++i) {
+			String msg = msges.get(i);
+			bigMsg += msg;
+		}
+		return bigMsg;
+	}
+
+	public String[] removeCoursesUserIsIn(ResultSet rs, String[] IDs) throws SQLException {
+		String[] newIDs = IDs;
+		for (int i = 0; i < newIDs.length; ++i) {
+			String id = newIDs[i];
+			if (userIsEnrolledInCourse(rs,id))
+				newIDs[i] = "";
+		}
+		rs.beforeFirst();
+		return newIDs;
 	}
 %>

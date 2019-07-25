@@ -58,7 +58,7 @@
 					inputCourses.add("");
 				int numValidInputCourses = 0;
 				numValidInputCourses = getInputSmartCourses(inputCourses,request);
-				String query = new String(buildSmartEnrollSearchQuery(inputCourses));
+				String query = new String(buildSmartEnrollSearchQueryByName(inputCourses));
 				ResultSet rs=stmt.executeQuery(query);
 				boolean noResults = !rs.next();	
 				if (noResults) {
@@ -110,7 +110,7 @@
 					stmt2.executeUpdate(query);
 				}
 				out.println("<h3>All classes removed successfully!</h3><br><br>");
-				out.println("<button type='button' onclick='goBack()'>Back</button>");
+				out.println(printBackButton());
 			}
 
 			else {
@@ -121,31 +121,19 @@
 				out.println("<h3>Your Schedule:</h3><br>");
 				query = "SELECT * from " + user;
 				ResultSet rs=stmt.executeQuery(query);
-				int num_fields = rs.getMetaData().getColumnCount();
-				out.println("<table>");
-				out.println("<tr><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>");
-				while (rs.next()) {
-					out.println("<tr>");
-					for (int i=0; i<num_fields; ++i)
-					{
-						out.println("<td>");
-						out.println(rs.getString(i+1));
-						out.println("</td>");
-					}
-					out.println("</tr>");
-				}
-				out.println("</table><br><br>");
-				out.println("<br><button type='button' onclick='goBack()'>Back</button>");
+				out.println(printCoursesTable(rs,""));
+				out.println(printBackButton());
 
 				rs.close();			
 			}
+
 			stmt.close();
 			db.close();
+		}
 
-			}
-			catch (Exception e) {
-				out.println(e.toString());  // Error message to display
-			}
+		catch (Exception e) {
+			out.println(e.toString());  // Error message to display
+		}
 	%>
 		<input id="user" name="user" value="<%=user%>" hidden>
 		<input id="add" name="add" value="" hidden>

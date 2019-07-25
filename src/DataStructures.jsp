@@ -91,6 +91,15 @@
 			return "<td>" + id + "</td>" + "<td>" + name + "</td>" + "<td>" + department + "</td>" + "<td>" + teacher + 
 			"</td>" + "<td>" + time + "</td>";
 		}
+		public boolean hasTimeOverlapAt(String compareTime) {
+			Course dummyCourse = new Course(id, name, department, teacher, compareTime);
+			if ((startTime >= dummyCourse.getStartTime()) && (startTime <= dummyCourse.getEndTime()))
+				return true;
+			else if ((endTime >= dummyCourse.getStartTime()) && (endTime <= dummyCourse.getEndTime()))
+				return true;
+
+			return false;
+		}
 	}
 
 	public class Schedule {
@@ -148,32 +157,24 @@
 			}
 			rs.beforeFirst();
 		}
-		public void removeThisCourseIfTimeConflict(String leastImportantCourse) {
+		public int findThisCourse(String comparisonCourse) {
 			for (int coursePos = 0; coursePos < numCourses; ++coursePos) {
-				String courseName = getCourseAt(coursePos).getName();
-				if (courseName.equals(leastImportantCourse)) {
-					for (int comparisonCoursePos = 0; comparisonCoursePos < numCourses; ++comparisonCoursePos) {
-						if (comparisonCoursePos!=coursePos && hasTimeOverlapAt(coursePos,comparisonCoursePos)) {
-							removeCourseAt(coursePos);
-							return;
-						}
-					}
+				String course = getCourseAt(coursePos).getName();
+				if (course.equals(comparisonCourse))
+					return coursePos;
+			}
+			return -1;
+		}
+		public void removeHereIfTimeConflict(int coursePos) {
+			Course course = getCourseAt(coursePos);
+			for (int comparisonCoursePos = 0; comparisonCoursePos < numCourses; ++comparisonCoursePos) {
+				Course comparisonCourse = getCourseAt(comparisonCoursePos);
+				String time = comparisonCourse.getTime();
+				if (comparisonCoursePos!=coursePos && course.hasTimeOverlapAt(time)) {
+					removeCourseAt(coursePos);
+					return;
 				}
 			}
-		}
-		private boolean hasTimeOverlapAt(int coursePos, int comparisonCoursePos) {
-			Course course = getCourseAt(coursePos);
-			double courseStartTime = course.getStartTime();
-			double courseEndTime = course.getEndTime();
-			Course comparisonCourse = getCourseAt(comparisonCoursePos);
-			double comparisonCourseStartTime = comparisonCourse.getStartTime();
-			double comparisonCourseEndTime = comparisonCourse.getEndTime();
-			if ((courseStartTime >= comparisonCourseStartTime) && (courseStartTime <= comparisonCourseEndTime))
-				return true;
-			else if ((courseEndTime >= comparisonCourseStartTime) && (courseEndTime <= comparisonCourseEndTime))
-				return true;
-
-			return false;
 		}
 	}
 %>
