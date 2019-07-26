@@ -62,24 +62,22 @@
 				ResultSet rs=stmt.executeQuery(query);
 				boolean noResults = !rs.next();	
 				if (noResults) {
-					out.println("Your search yielded no results. (page no longer active)");
+					out.println("Your search yielded no results. (page no longer active)<br><br>");
 					out.println(printBackButton());
 					return;
 				}
 				rs.beforeFirst();
 				String badCourse = new String(findBadCourse(inputCourses,rs));
 				if (!badCourse.equals("")) {
-					out.println("\"" + badCourse + "\" is not a real course. (page no longer active)");
+					out.println("\"" + badCourse + "\" is not a real course. (page no longer active)<br><br>");
 					out.println(printBackButton());
 					return;
 				}
-				Schedule allSelectedCourseOptions = new Schedule();
-				allSelectedCourseOptions.retrieveCourses(rs);
-				int[] courseIndices = new int[numValidInputCourses];
+				Schedule allSelectedCourseOptions = new Schedule(rs);
 				ArrayList<Schedule> allPossibleSchedules = new ArrayList<Schedule>();
 
 				if (numValidInputCourses <= allSelectedCourseOptions.getNumCourses())
-					getAllPossibleSchedules(allPossibleSchedules, allSelectedCourseOptions, numValidInputCourses, courseIndices);
+					getAllPossibleSchedules(allPossibleSchedules, allSelectedCourseOptions, numValidInputCourses);
 
 				removeSchedulesWithDuplicateCourses(allPossibleSchedules);
 				resolveTimeConflictsInSchedules(allPossibleSchedules,inputCourses);
@@ -93,6 +91,7 @@
 				out.println("<h3>Options:</h3><br><br>");
 				for (int schedulePos = 0; schedulePos < allPossibleSchedules.size(); ++schedulePos) {
 					Schedule schedule = allPossibleSchedules.get(schedulePos);
+					schedule.orderByTime();
 					String idVals = new String("");
 					out.println(printSmartSchedule(schedule,idVals,schedulePos+1));
 				}

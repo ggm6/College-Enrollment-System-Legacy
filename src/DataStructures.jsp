@@ -1,30 +1,57 @@
 <%@page import="java.util.*"%>
 <%@page import="java.sql.*"%>
 <%!
+	class CourseException extends Exception {
+		private final int numComponents;
+		public CourseException(int numComponents) {
+			this.numComponents = numComponents;
+		}
+		public String message() {
+			return "Sorry, but a Course has " + numComponents + " components.";
+		}
+	}
+
 	public class Course {
 		private String id;
 		private String name;
 		private String department;
 		private String teacher;
 		private String time;
+		protected static final int numComponents = 5;
 		private double startTime;
 		private double endTime;
 
+		public Course() {
+			id = "";
+			name = "";
+			department = "";
+			teacher = "";
+			time = "";
+			startTime = 0;
+			endTime = 0;
+		}
 		public Course(String[] courseComponents) {
-			for (int i = 0; i < courseComponents.length; ++i) {
-				String component = courseComponents[i];
-				if (i == 0)
-					id = component;
-				else if (i == 1)
-					name = component;
-				else if (i == 2)
-					department = component;
-				else if (i == 3)
-					teacher = component;
-				else {
-					time = component;
-					setTimeAsDouble();
+			try {
+				if (courseComponents.length != numComponents)
+					throw new CourseException(numComponents);
+				for (int i = 0; i < courseComponents.length; ++i) {
+					String component = courseComponents[i];
+					if (i == 0)
+						id = component;
+					else if (i == 1)
+						name = component;
+					else if (i == 2)
+						department = component;
+					else if (i == 3)
+						teacher = component;
+					else {
+						time = component;
+						setTimeAsDouble();
+					}
 				}
+			}
+			catch (CourseException e) {
+				System.out.println(e.message());
 			}
 		}
 		public Course(String id,String name, String department, String teacher, String time) {
@@ -58,6 +85,9 @@
 		}
 		public String getTime() {
 			return time;
+		}
+		public int getNumComponents() {
+			return numComponents;
 		}
 		private void setTimeAsDouble() {
 			String timeArr[] = new String[2];
@@ -113,6 +143,7 @@
 			capacity = maxCourses;
 		}
 		public Schedule(Schedule schedule) {
+			courses = new ArrayList<Course>();
 			courses = schedule.courses;
 			numCourses = schedule.numCourses;
 			capacity = schedule.capacity;
@@ -120,6 +151,31 @@
 		public Schedule(int capacity) {
 			courses = new ArrayList<Course>(capacity);
 			this.capacity = capacity;
+		}
+		public Schedule(ResultSet rs) throws SQLException {
+			courses = new ArrayList<Course>();
+			capacity = maxCourses;
+			try {
+				rs.beforeFirst();
+				int columnCount=rs.getMetaData().getColumnCount();
+				Course dummyCourse = new Course();
+				if (columnCount != dummyCourse.getNumComponents())
+					throw new CourseException(dummyCourse.getNumComponents());
+				while (rs.next()) {
+					String[] courseComponents=new String[columnCount];
+					for (int columnPos = 0; columnPos < columnCount; ++columnPos) {
+						courseComponents[columnPos] = rs.getString(columnPos+1);
+						courseComponents[columnPos] = courseComponents[columnPos].trim();
+					}
+					Course course = new Course(courseComponents);
+					courses.add(course);
+					++numCourses;
+				}
+				rs.beforeFirst();
+			}
+			catch (CourseException e) {
+				System.out.println(e.message());
+			}
 		}
 		public Course getCourseAt(int index) {
 			return courses.get(index);
@@ -143,20 +199,6 @@
 		public int getNumCourses() {
 			return numCourses;
 		}
-		public void retrieveCourses(ResultSet rs) throws SQLException {
-			int columnCount=rs.getMetaData().getColumnCount();
-			while (rs.next()) {
-				String[] courseComponents=new String[columnCount];
-				for (int columnPos = 0; columnPos < columnCount; ++columnPos) {
-					courseComponents[columnPos] = rs.getString(columnPos+1);
-					courseComponents[columnPos] = courseComponents[columnPos].trim();
-				}
-				Course course = new Course(courseComponents);
-				courses.add(course);
-				++numCourses;
-			}
-			rs.beforeFirst();
-		}
 		public int findThisCourse(String comparisonCourse) {
 			for (int coursePos = 0; coursePos < numCourses; ++coursePos) {
 				String course = getCourseAt(coursePos).getName();
@@ -172,9 +214,28 @@
 				String time = comparisonCourse.getTime();
 				if (comparisonCoursePos!=coursePos && course.hasTimeOverlapAt(time)) {
 					removeCourseAt(coursePos);
-					return;
+					break;
 				}
 			}
+		}
+		public void orderByTime() {
+			ArrayList<Course> newCourses = new ArrayList<Course>();
+			while (courses.size() > 0) {
+				double earliestStartTime = 25;
+				Course newCourse = new Course();
+				int removePos = -1;
+				for (int coursePos = 0; coursePos < courses.size(); ++coursePos) {
+					Course course = courses.get(coursePos);
+					if (course.getStartTime() < earliestStartTime) {
+						earliestStartTime = course.getStartTime();
+						newCourse = new Course(course);
+						removePos = coursePos;
+					}
+				}
+				courses.remove(removePos);
+				newCourses.add(newCourse);
+			}
+			courses = newCourses;
 		}
 	}
 %>

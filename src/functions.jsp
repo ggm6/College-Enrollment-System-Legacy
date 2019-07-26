@@ -2,27 +2,23 @@
 <%@page import="java.utils.*"%>
 <%@include file="DataStructures.jsp"%>
 <%!
-	public String printCoursesTable(ResultSet rs, String courseTableCommand) {
+	public String printCoursesTable(ResultSet rs, String courseTableCommand) throws SQLException {
+		rs.beforeFirst();
 		String table = "<table>";
-		try {
-			int num_fields = rs.getMetaData().getColumnCount();
-			table += "<tr><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>";
-			while (rs.next()) {
-				table += "<tr>";
-				String courseID = rs.getString(1);
-				for (int i=0; i<num_fields; ++i)
-					table += "<td>" + rs.getString(i+1) + "</td>";
-				if (courseTableCommand == "Remove")
-					table += "<td><a href='javascript:pageTwoOnSubmitForm1(" + courseID + ");'>Remove</a></td></tr>";
-				else if (courseTableCommand == "Add")
-					table += "<td><a href='javascript:pageThreeOnSubmitForm1(" + courseID + ");'>Add</a></td></tr>";
-			}
-			table += "</table><br>";
-			rs.beforeFirst();
+		int num_fields = rs.getMetaData().getColumnCount();
+		table += "<tr><th>Course ID</th><th>Course Name</th><th>Department</th><th>Professor</th><th>Time Slot</th></tr>";
+		while (rs.next()) {
+			table += "<tr>";
+			String courseID = rs.getString(1);
+			for (int i=0; i<num_fields; ++i)
+				table += "<td>" + rs.getString(i+1) + "</td>";
+			if (courseTableCommand == "Remove")
+				table += "<td><a href='javascript:pageTwoOnSubmitForm1(" + courseID + ");'>Remove</a></td></tr>";
+			else if (courseTableCommand == "Add")
+				table += "<td><a href='javascript:pageThreeOnSubmitForm1(" + courseID + ");'>Add</a></td></tr>";
 		}
-		catch (Exception e) {
-			return e.toString();  // Error message to display
-		}
+		table += "</table><br>";
+		rs.beforeFirst();
 		return table;
 	}
 
@@ -91,6 +87,7 @@
 	}
 
 	public boolean compareIDs(ResultSet rs, String createAccountID) throws SQLException {
+		rs.beforeFirst();
 		while (rs.next()) {
 			String retrievedID = rs.getString(1);
 			if (createAccountID.equals(retrievedID))
@@ -217,6 +214,7 @@
 	}
 
 	public String findBadCourse(ArrayList<String> courses, ResultSet rs) throws SQLException {
+		rs.beforeFirst();
 		for (int pos = 0; pos < courses.size(); ++pos) {
 			String inputCourse = courses.get(pos);
 			boolean badCourse = true;
@@ -231,15 +229,8 @@
 			if (badCourse)
 				return inputCourse;
 		}
+		rs.beforeFirst();
 		return "";
-	}
-
-	// generate actual Schedule by index sequence
-	public ArrayList<String[]> getSubset(ArrayList<String[]> input, int[] courseIndices) {
-	    ArrayList<String[]> result = new ArrayList<String[]>(courseIndices.length); 
-	    for (int i = 0; i < courseIndices.length; i++) 
-	        result.add(i,input.get(courseIndices[i]));
-	    return result;
 	}
 
 	public Schedule getScheduleByIndexSequence(Schedule inputSchedule, int[] courseIndices) {
@@ -252,11 +243,13 @@
 	    return result;
 	}
 
-	public void getAllPossibleSchedules(ArrayList<Schedule> allPossibleSchedules, Schedule allSelectedCourseOptions, int numValidInputCourses, int[] courseIndices) {
+	public void getAllPossibleSchedules(ArrayList<Schedule> allPossibleSchedules, Schedule allSelectedCourseOptions, int numValidInputCourses) {
 		/* Following code adapted from: 
 				 https://stackoverflow.com/questions/29910312/algorithm-to-get-all-the-combinations-of-size-n-from-an-array-java
 			by answerer: Alex Salauyou
 		*/
+
+		int[] courseIndices = new int[numValidInputCourses];
 
 		// first index sequence: 0, 1, 2, ...
 	    for (int i = 0; (courseIndices[i] = i) < numValidInputCourses - 1; i++);
@@ -336,6 +329,7 @@
 	}
 
 	public boolean userIsEnrolledInCourse(ResultSet rs, String courseID) throws SQLException {
+		rs.beforeFirst();
 		while (rs.next()) {
 			if (courseID.equals(rs.getString(1))) {
 				rs.beforeFirst();
@@ -360,6 +354,7 @@
 	}
 
 	public ArrayList<String> getStatusOfEnrollment(ResultSet rs, String[] IDs) throws SQLException {
+		rs.beforeFirst();
 		ArrayList<String> enrollStatusMsges = new ArrayList<String>();
 		for (int i = 0; i < IDs.length; ++i) {
 			String id = IDs[i];
@@ -382,6 +377,7 @@
 	}
 
 	public String[] removeCoursesUserIsIn(ResultSet rs, String[] IDs) throws SQLException {
+		rs.beforeFirst();
 		String[] newIDs = IDs;
 		for (int i = 0; i < newIDs.length; ++i) {
 			String id = newIDs[i];
