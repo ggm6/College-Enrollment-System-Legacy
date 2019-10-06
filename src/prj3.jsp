@@ -57,12 +57,16 @@
 				out.println(printEnrollStatusMsges(enrollStatusMsges));
 				IDs = removeCoursesUserIsIn(rs,IDs);
 
+
 				query = buildSmartEnrollSearchQueryByIDs(IDs);
 				rs = stmt.executeQuery(query);
-				ArrayList<String> fields = new ArrayList<String>();
-				fields = fillFieldsFromResultSet(rs);
-				query = buildEnrollInsertQuery(fields, user);
-				stmt.executeUpdate(query);
+				ArrayList<String> fields;
+				Statement stmt2 = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				while (rs.next()) {
+					fields = new ArrayList<String>( fillFieldsFromResultSet(rs) );
+					query = buildEnrollInsertQuery(fields, user);
+					stmt2.executeUpdate(query);
+				}
 
 				out.println("<h3>Your Schedule:</h3><br>");
 				query="SELECT * FROM " + user;

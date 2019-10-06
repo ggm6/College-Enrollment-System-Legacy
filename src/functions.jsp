@@ -341,15 +341,12 @@
 	}
 
 	public ArrayList<String> fillFieldsFromResultSet(ResultSet rs) throws SQLException {
-		rs.beforeFirst();
-		rs.next();
 		ArrayList<String> fields = new ArrayList<String>();
 		int num_fields = rs.getMetaData().getColumnCount();
 		for (int fieldPos = 0; fieldPos < num_fields; ++fieldPos) {
 			String field = rs.getString(fieldPos+1);
 			fields.add(field);
 		}
-		rs.beforeFirst();
 		return fields;
 	}
 
