@@ -1,5 +1,5 @@
 <%@page import="java.sql.*"%>
-<%@page import="java.utils.*"%>
+<%@page import="java.util.*"%>
 <%@include file="DataStructures.jsp"%>
 <%!
 	public String printCoursesTable(ResultSet rs, String courseTableCommand) throws SQLException {
@@ -34,7 +34,7 @@
 				idVals += course.getID();
 			table += "</tr>";
 		}
-		table += "</table><input type='hidden' id='table" + scheduleNum + "' name='table" + scheduleNum + "' value='" + idVals + "'/><br><br>";
+		table += "</table><input hidden=true id='table" + scheduleNum + "' name='table" + scheduleNum + "' value='" + idVals + "'/><br><br>";
 		return table;
 	}
 

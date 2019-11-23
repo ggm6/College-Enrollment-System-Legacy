@@ -13,7 +13,7 @@
 
 		try {
 			Connection db;
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
+//			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			String dbUrl,dbUser,dbPass;
 			dbUrl = "jdbc:mysql://localhost:3306/Scheduling";
 			dbUser = "root";

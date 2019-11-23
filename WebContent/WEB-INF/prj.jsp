@@ -14,7 +14,7 @@
 
 		try {
 			Connection db;
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
+//			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			String dbUrl,dbUser,dbPass;
 			dbUrl = "jdbc:mysql://localhost:3306/Scheduling";
 			dbUser = "root";
@@ -106,11 +106,11 @@
 		}
 	%>
 	<div id="courseSearch" class="Form"> <br><h3>Please provide some criteria for course search</h3>
-		Course ID:<br><input id="courseID" name="courseSearchID" cols="20" rows="1"></textarea><br>
-		Course Name:<br><input id="courseName" name="courseSearchName" cols="20" rows="1"></textarea><br>
-		Department:<br><input id="department" name="courseSearchDepartment" cols="20" rows="1"></textarea><br>
-		Teacher:<br><input id="teacher" name="courseSearchTeacher" cols="20" rows="1"></textarea><br>
-		Time:<br><input id="time" name="courseSearchTime" cols="20" rows="1" placeholder="'1:00PM-2:15PM'"></textarea><br>
+		Course ID:<br><input id="courseID" name="courseSearchID" cols="20" rows="1"><br>
+		Course Name:<br><input id="courseName" name="courseSearchName" cols="20" rows="1"><br>
+		Department:<br><input id="department" name="courseSearchDepartment" cols="20" rows="1"><br>
+		Teacher:<br><input id="teacher" name="courseSearchTeacher" cols="20" rows="1"><br>
+		Time:<br><input id="time" name="courseSearchTime" cols="20" rows="1" placeholder="'1:00PM-2:15PM'"><br>
 		<br><button type="button" onclick="pageTwoOnSubmitForm2('regEnroll')">Submit</button>
 	</div><br>
 	<div id="buildSmartSchedule" class="Form"><br>
@@ -119,10 +119,10 @@
 		<br><button type="button" id="courseNum" onclick="addCourse()">Add Course</button><div id="Divider" class="Divider"></div><button  type="button" id="submitButton" onclick="pageTwoOnSubmitForm2('smartEnroll')">Submit</button>
 		</strong>
 	</div>
-	<input id="user" name="user" value="<%=trueID%>" hidden>
-	<input id="task" name="task" value="" hidden>
-	<input id="remove" name="remove" value="" hidden>
-	<input id="smartSchedulingNumCourses" name="smartSchedulingNumCourses" value="1" hidden>
+	<input id="user" name="user" value="<%=trueID%>" hidden=true>
+	<input id="task" name="task" value="" hidden=true>
+	<input id="remove" name="remove" value="" hidden=true>
+	<input id="smartSchedulingNumCourses" name="smartSchedulingNumCourses" value="1" hidden=true>
 </form>
 </body>
 </html>

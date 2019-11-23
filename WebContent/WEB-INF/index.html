@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<title>UA Smart Scheduling</title>
 	<link rel="stylesheet" href="styling.css">
 	<script type="text/javascript" src="js/scripting.js"></script>
 </head>
-<title>UA Smart Scheduling</title>
-<center><h1>Welcome to University of Akron Smart Scheduling!</h1></center><br><br>
+<h1 class="head">Welcome to University of Akron Smart Scheduling!</h1><br><br>
 <body>
 	<form id="myform" name="myform" method = "post">
 		<button name="Course Lookup" type="button" id="Course Lookup" class="Button" onclick="findCourse()">Course Lookup</button><br><br><br><br>
@@ -29,7 +29,7 @@
 			Time:<br><input id="time" name="time" cols="20" rows="1" placeholder=&quot;1:00PM-2:15PM&quot;><br>
 			<button type="submit" onclick="pageOneOnSubmitForm('Search')">Submit</button>
 		</div>
-		<input id="task" name="task" hidden>
+		<input id="task" name="task" hidden=true>
 	</form>
 </body>
 </html>

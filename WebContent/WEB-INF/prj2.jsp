@@ -14,7 +14,7 @@
 
 		try {
 			Connection db;
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
+//			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			String dbUrl,dbUser,dbPass;
 			dbUrl = "jdbc:mysql://localhost:3306/Scheduling";
 			dbUser = "root";
@@ -134,10 +134,10 @@
 			out.println(e.toString());  // Error message to display
 		}
 	%>
-		<input id="user" name="user" value="<%=user%>" hidden>
-		<input id="add" name="add" value="" hidden>
-		<input id="scheduleType" name="scheduleType" value="<%=task%>" hidden>
-		<input id="tableNum" name="tableNum" value="" hidden>
+		<input id="user" name="user" value="<%=user%>" hidden=true>
+		<input id="add" name="add" value="" hidden=true>
+		<input id="scheduleType" name="scheduleType" value="<%=task%>" hidden=true>
+		<input id="tableNum" name="tableNum" value="" hidden=true>
 	</form>
 </body>
 </html>

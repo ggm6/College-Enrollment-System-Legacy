@@ -1,0 +1,28 @@
+<?xml version="1.0" ?> 
+<!DOCTYPE xml>
+<project name="College Enrollment System" default="compile">
+
+	<property name="MavenPath" value="C:/Users/Garrett/.m2/repository"/>
+	
+	<path id="classpath.compile">
+	  <pathelement path="${MavenPath}/junit/junit/3.8.1/junit-3.8.1.jar"/>
+	  <pathelement path="${MavenPath}/com/google/code/gson/gson/2.2.2/gson-2.2.2.jar"/>
+	</path>
+	
+	<target name="clean">
+		<delete dir="build" />
+	</target>
+
+	<target name="init" depends="clean">
+		<mkdir dir="build/classes" />
+	</target>
+
+	<target name="compile" depends="init">
+		<javac srcdir="src" destdir="build/classes" includes="com/**">
+		  <classpath refid="classpath.compile"/>
+		</javac>
+	</target>
+	
+	
+	
+</project>
