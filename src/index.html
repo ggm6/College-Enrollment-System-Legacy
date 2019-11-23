@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="styling.css">
+	<script type="text/javascript" src="js/scripting.js"></script>
+</head>
+<title>UA Smart Scheduling</title>
+<center><h1>Welcome to University of Akron Smart Scheduling!</h1></center><br><br>
+<body>
+	<form id="myform" name="myform" method = "post">
+		<button name="Course Lookup" type="button" id="Course Lookup" class="Button" onclick="findCourse()">Course Lookup</button><br><br><br><br>
+		<button name="Create" type="button" id="Create" class="Button" onclick="createAccount()">Create Account</button><br><br><br><br>
+		<button name="Enroll" type="button" id="Enroll" class="Button" onclick="verifyStudent()">Enroll</button><br><br>
+		<div id="login" class="Form"> <br><h3>Please enter login information before continuing</h3>
+			Please enter user ID:<br><input id="loginID" name="loginID" minlength="4" required><br>
+			Please enter user password:<br><input id="loginPassword" name="loginPassword" minlength="4" type="password" required><br>
+			<button type="submit" onclick="pageOneOnSubmitForm('Login')">Submit</button>
+		</div>
+		<div id="create" class="Form"> <br><h3>Please pick an ID and password</h3>
+			New user ID:<br><input id="createAccountID" name="createAccountID" minlength="4" required><br>
+			New user password:<br><input id="createAccountPassword" name="createAccountPassword" type="password" minlength="4" required><br>
+			<button type="submit" onclick="pageOneOnSubmitForm('Create')">Submit</button>
+		</div>
+		<div id="search" class="Form"> <br><h3>Please provide some criteria for course search</h3>
+			Course ID:<br><input id="courseID" name="courseID" cols="20" rows="1" placeholder="Please be exact"><br>
+			Course Name:<br><input id="courseName" name="courseName" cols="20" rows="1"><br>
+			Department:<br><input id="department" name="department" cols="20" rows="1"><br>
+			Teacher:<br><input id="teacher" name="teacher" cols="20" rows="1"><br>
+			Time:<br><input id="time" name="time" cols="20" rows="1" placeholder=&quot;1:00PM-2:15PM&quot;><br>
+			<button type="submit" onclick="pageOneOnSubmitForm('Search')">Submit</button>
+		</div>
+		<input id="task" name="task" hidden>
+	</form>
+</body>
+</html>

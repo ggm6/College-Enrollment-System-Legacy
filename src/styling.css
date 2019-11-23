@@ -1,0 +1,46 @@
+::-webkit-input-placeholder {
+   font-style: italic;
+}
+:-moz-placeholder {
+   font-style: italic;  
+}
+::-moz-placeholder {
+   font-style: italic;  
+}
+:-ms-input-placeholder {  
+   font-style: italic; 
+}
+
+.Button {
+	width: 200px;
+	height: 50px;
+	font-size: 100%;
+}
+
+.Form {
+	display: none;
+}
+
+.Divider{
+    width:20px;
+    display:inline-block;
+}
+
+.hiddenSubmit {
+	display: none;
+}
+
+table {
+	width: 50%;
+	border: 1px solid black;
+}
+
+th,td,tr {
+	width: 20%;
+	border: 1px solid black;
+	text-align: center;
+}
+
+.specialTh {
+	border: none;
+}
